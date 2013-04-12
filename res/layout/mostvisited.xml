@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+	<Button
+	    android:id="@+id/mVisistedPublishButton"
+	    android:background="@drawable/facebook_green_button"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:text="        Share"
+    	android:textColor="#013b08"
+        android:textSize="12sp"
+        android:textStyle="bold"
+    	android:layout_centerHorizontal="TRUE" 
+    	android:layout_marginTop="10dip"
+        android:layout_marginBottom="10dip"
+        android:drawablePadding="3dip">
+	</Button>
+    <ListView
+        android:id="@android:id/list"
+        android:layout_below="@+id/mVisistedPublishButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+    
+        
+</RelativeLayout>
