@@ -30,6 +30,7 @@ public final class R {
         public static final int trash_copy=0x7f020010;
     }
     public static final class id {
+        public static final int Button=0x7f05001b;
         public static final int FacebookShareButton=0x7f050000;
         public static final int FacebookShareNotButton=0x7f050001;
         public static final int add_button=0x7f050015;
@@ -71,6 +72,7 @@ public final class R {
         public static final int rounded_corner=0x7f030009;
         public static final int searchactivity=0x7f03000a;
         public static final int searchbyaddress=0x7f03000b;
+        public static final int statslayout=0x7f03000c;
     }
     public static final class string {
         public static final int app_name=0x7f040000;

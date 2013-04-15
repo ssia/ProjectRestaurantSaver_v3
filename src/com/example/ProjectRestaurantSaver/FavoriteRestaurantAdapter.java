@@ -65,8 +65,8 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 			TextView ta = (TextView) v.findViewById(R.id.favVisited_address);
 			//Get address for the restaurant by querying the database
 			rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-			Log.v("ref.getName() ", ref.getName());
-			Cursor c = rd.getRestaurantAddressesByName(ref.getName());
+			Log.v("ref.getName() + ID", ref.getName() + ref.getId());
+			Cursor c = rd.check_restaurant_address_inDatabase(ref.getId());
 			
 			
 			int contactColumn = c.getColumnIndex("RAddress");	
@@ -86,7 +86,7 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 				@Override
 				public void onClick(View v){
 					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-					Cursor c = rd.check_restaurant_contact_inDatabase(item.getName());
+					Cursor c = rd.check_restaurant_contact_inDatabase(item.getId());////Changed the query to find by res_id
 					int contactColumn = c.getColumnIndex("RContact");	
 					String favContact;
 					if (c != null) {
@@ -110,7 +110,7 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 				@Override
 				public void onClick(View arg0) {
 					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-					Cursor c = rd.check_restaurant_address_inDatabase(item.getName());
+					Cursor c = rd.check_restaurant_address_inDatabase(item.getId());//Changed the query to find by res_id
 					int contactColumn = c.getColumnIndex("RAddress");	
 					String mVisitedAddress;
 					if (c != null) {
@@ -142,15 +142,15 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 				public void onClick(View arg0) {
 					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 					RestaurantApplication restaurantApplication = (RestaurantApplication) getContext().getApplicationContext();
-					Cursor all = rd.check_restaurant_favorite_inDatabase(item.getName());
+					Cursor all = rd.check_restaurant_favorite_inDatabase(item.getId());//Changed the query to find by res_id
 
 					int timesColumn = all.getColumnIndex("noOfTimes");	
 					//Check if the restaurant is present in the MostVistited list.If yes, then only change the Favorites entry, else delete the Restaurant entry from the database.
 					if(timesColumn == 0){
-						boolean c = rd.deleteRowInList(item.getName());
+						boolean c = rd.deleteRowInList(item.getId());//Changed the query to find by res_id
 					}
 					else{
-						rd.removeRFavoriteInDatabase(item.getName());
+						rd.removeRFavoriteInDatabase(item.getId());//Changed the query to find by res_id
 					}
 					FavoriteRestaurantAdapter.this.remove(item);//inner class accessing the parent to remove just the particular row of the list
 
@@ -160,14 +160,18 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 					}
 				}
 			});
+			
 			OnRatingBarChangeListener barChangeListener = new RatingChangeListener(ref) {	
-
+				
 				@Override
 				public void onRatingChanged(RatingBar rBar, float fRating, boolean fromUser) {
 					if(fromUser){
 						int rating = (int) fRating;
+						Log.v("Rating selected= ", String.valueOf(rating));
 						rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-						rd.updateRatingInDatabase(item.getName(), rating);	    				
+						item.setRating(rating);
+						//Log.v("Adding In Database", item.getName()+ " "+item.getId()+" "+String.valueOf(rating));
+						//System.out.println("Updated Rating in Database" +rd.updateRatingInDatabase(item.getId(), rating));//changed from item.getName() to item.getId() due to adding Res_Id as Primary_Key in Database	    				
 					}
 				}
 			};

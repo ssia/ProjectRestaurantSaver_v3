@@ -62,8 +62,8 @@ public class RestaurantHttpAsyncTaskTextSearch extends AsyncTask<Void, Void, Arr
 					ref.setName((jo.getString("name")));
 					JSONObject jb = jo.getJSONObject("geometry");
 					JSONObject jbo = jb.getJSONObject("location");
-					Log.v("Latitude", jbo.getString("lat"));
-					Log.v("Longitude", jbo.getString("lng"));
+					//Log.v("Latitude", jbo.getString("lat"));
+					//Log.v("Longitude", jbo.getString("lng"));
 					//if(!restaurantMap.containsKey((jo.getString("name")))){
 					//	restaurantMap.put((jo.getString("name")), (jo.getString("name")));
 						Log.v("res_name", (jo.getString("name")));

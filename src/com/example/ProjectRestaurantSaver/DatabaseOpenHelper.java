@@ -130,6 +130,16 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 		Cursor mCursor = db.rawQuery(q, null);
 		return mCursor;
 	}
+	
+	public Cursor getStats() {
+		
+		SQLiteDatabase db = getReadableDatabase();
+		String q = "SELECT RName, SUM(NoOfTimes), AVG(Rrating) FROM restaurants GROUP BY LOWER(RName);";
+		Cursor mCursor = db.rawQuery(q, null);
+		return mCursor;
+		
+	}
+	
 
 	/*
 	 * Query to obtain the row of the table where the restaurant name = res_name.
@@ -164,7 +174,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	public Cursor getFavoriteRestaurantNames(){
 		SQLiteDatabase db = getReadableDatabase();
 		//Cursor cursor = db.query(restaurantTable, new String[] {"RName", "NoOfTimes"}, null, null, null, null, "NoOfTimes ASC");
-		String q = "SELECT RName, Rrating FROM restaurants WHERE RFavorite == 1 Order By Rrating DESC;";
+		String q = "SELECT RName, RID, Rrating FROM restaurants WHERE RFavorite == 1 Order By Rrating DESC;";
 		Cursor mCursor = db.rawQuery(q, null);
 		return mCursor;
 	}
@@ -236,7 +246,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	//Return the contact phone number of the restaurant obtain as argument.
 	public Cursor check_restaurant_contact_inDatabase(String id) {
 		SQLiteDatabase db = getReadableDatabase();
-		String q = "SELECT RContact FROM restaurants WHERE RName = " +"\"" +id + "\""+ ";";
+		String q = "SELECT RContact FROM restaurants WHERE RID = " +"\"" +id + "\""+ ";";
 		Cursor mCursor = db.rawQuery(q, null);
 		return mCursor;		
 	}

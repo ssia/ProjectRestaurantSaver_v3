@@ -69,7 +69,7 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 				tt.setText(ref.getName());  
 				//Get address for the restaurant by querying the database
 				rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-				Cursor c = rd.getRestaurantAddressesByName(ref.getName());
+				Cursor c = rd.check_restaurant_address_inDatabase(ref.getId());//Changed the query to find by res_id
 				int contactColumn = c.getColumnIndex("RAddress");	
 				@SuppressWarnings("unused")
 				String mVisitedAddress = "";
@@ -94,7 +94,7 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 				@Override
 				public void onClick(View v){
 					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-					Cursor c = rd.check_restaurant_contact_inDatabase(item.getName());
+					Cursor c = rd.check_restaurant_contact_inDatabase(item.getId());
 					int contactColumn = c.getColumnIndex("RContact");	
 					String favContact;
 					if (c != null) {
@@ -122,7 +122,7 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 				@Override
 				public void onClick(View arg0) {
 					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-					Cursor c = rd.check_restaurant_address_inDatabase(item.getName());
+					Cursor c = rd.check_restaurant_address_inDatabase(item.getId());//Changed the query to find by res_id
 					int contactColumn = c.getColumnIndex("RAddress");	
 					String mVisitedAddress;
 					if (c != null) {
@@ -156,15 +156,15 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 				public void onClick(View arg0) {
 					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 
-					Cursor all = rd.check_restaurant_favorite_inDatabase(item.getName());
+					Cursor all = rd.check_restaurant_favorite_inDatabase(item.getId());
 					int favColumn = all.getColumnIndex("RFavorite");	
 					/*check if the restaurant is marked as Favorties. If yes, then only remove entry from NoOfTimes Column in the database
 					If the restaurant is not marked as Favorites, then remove the entry for the restaurant from the databse*/
 					if(favColumn == 0){
-						boolean c = rd.deleteRowInList(item.getName());
+						boolean c = rd.deleteRowInList(item.getId());//Changed the query to find by res_id
 					}
 					else{
-						rd.removeMVisitedInDatabase(item.getName());
+						rd.removeMVisitedInDatabase(item.getId());//Changed the query to find by res_id
 					}
 					MostVisitedAdapter.this.remove(item);//inner class accessing the parent to remove just the particular row of the list
 				}

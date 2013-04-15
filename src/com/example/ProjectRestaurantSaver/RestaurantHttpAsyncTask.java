@@ -65,8 +65,8 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 				URLConnection tc = null;
 				BufferedReader in = null;
 				try{
-					String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.387413,-122.046046&radius=2700&types=restaurant&keyword="+keyword+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
-					//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.387413,-122.046046&radius=2700&types=restaurant&keyword=subway"+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
+					//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.387413,-122.046046&radius=2700&types=restaurant&keyword="+keyword+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
+					String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.387413,-122.046046&radius=2700&types=restaurant&keyword=subway"+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
 	
 					Log.v("URL", urldef);
 					URL urlPlace = new URL(urldef);    		
@@ -88,8 +88,8 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 						ref.setName((jo.getString("name")));
 						JSONObject jb = jo.getJSONObject("geometry");
 						JSONObject jbo = jb.getJSONObject("location");
-						Log.v("Latitude", jbo.getString("lat"));
-						Log.v("Longitude", jbo.getString("lng"));
+						//Log.v("Latitude", jbo.getString("lat"));
+						//Log.v("Longitude", jbo.getString("lng"));
 						//if(!restaurantMap.containsKey((jo.getString("id")))){
 							//restaurantMap.put((jo.getString("id")), (jo.getString("name")));
 							Log.v("res_id", (jo.getString("id")));

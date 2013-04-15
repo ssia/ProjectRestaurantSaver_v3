@@ -29,6 +29,11 @@
 	        android:label="@string/app_name"
 	        android:name=".NearbyRestaurantActivity">
         </activity>
+        
+        <activity
+	        android:label="@string/app_name"
+	        android:name=".StatsActivity">
+        </activity>        
         <activity
 	        android:label="@string/app_name"
 	        android:name=".TabGroup1Activity">

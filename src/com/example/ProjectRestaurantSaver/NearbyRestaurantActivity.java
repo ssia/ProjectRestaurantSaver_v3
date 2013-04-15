@@ -29,7 +29,7 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 	private double[] lastKnownLocation;
 	private EditText locationEditText;
 	
-	//ActionBar action;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
