@@ -3,7 +3,19 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-	
+	<Button
+		android:id="@+id/searchButton"
+		android:text="Search Restaurants"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/new_button"
+        android:layout_marginTop="10dip"
+        android:layout_marginBottom="10dip"
+        android:textColor="#013b08"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_alignParentLeft="TRUE">
+	</Button>    
 	<Button 
         android:id="@+id/reloadButton"
         android:layout_width="wrap_content"
@@ -13,6 +25,7 @@
         android:textColor="#013b08"
         android:textSize="12sp"
         android:textStyle="bold"
+        android:layout_toRightOf="@+id/searchButton"
         android:background="@drawable/new_button"
         android:layout_marginTop="10dip"
         android:layout_marginBottom="10dip">

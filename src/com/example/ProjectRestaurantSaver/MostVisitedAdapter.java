@@ -69,7 +69,7 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 				tt.setText(ref.getName());  
 				//Get address for the restaurant by querying the database
 				rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-				Cursor c = rd.check_restaurant_address_inDatabase(ref.getName());
+				Cursor c = rd.getRestaurantAddressesByName(ref.getName());
 				int contactColumn = c.getColumnIndex("RAddress");	
 				@SuppressWarnings("unused")
 				String mVisitedAddress = "";

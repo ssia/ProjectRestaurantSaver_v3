@@ -32,18 +32,18 @@ public final class R {
     public static final class id {
         public static final int FacebookShareButton=0x7f050000;
         public static final int FacebookShareNotButton=0x7f050001;
-        public static final int add_button=0x7f050012;
-        public static final int contactButton=0x7f050017;
-        public static final int directionsButton=0x7f050016;
-        public static final int distance_label=0x7f050015;
+        public static final int add_button=0x7f050013;
+        public static final int contactButton=0x7f050018;
+        public static final int directionsButton=0x7f050017;
+        public static final int distance_label=0x7f050016;
         public static final int favContactButton=0x7f050006;
         public static final int favDelete=0x7f050008;
         public static final int favDirectionsButton=0x7f050007;
         public static final int favName=0x7f050003;
         public static final int favPublishButton=0x7f050002;
         public static final int favVisited_address=0x7f050004;
-        public static final int fav_button=0x7f050013;
-        public static final int label=0x7f050014;
+        public static final int fav_button=0x7f050014;
+        public static final int label=0x7f050015;
         public static final int list=0x7f050009;
         public static final int mVisistedPublishButton=0x7f05000a;
         public static final int mVisitedContactButton=0x7f05000e;
@@ -53,7 +53,8 @@ public final class R {
         public static final int mVisited_name=0x7f05000b;
         public static final int noOfTimes=0x7f05000d;
         public static final int ratingbar=0x7f050005;
-        public static final int reloadButton=0x7f050011;
+        public static final int reloadButton=0x7f050012;
+        public static final int searchButton=0x7f050011;
     }
     public static final class layout {
         public static final int facebook_dialog=0x7f030000;
@@ -66,7 +67,8 @@ public final class R {
         public static final int nearbyrestaurants=0x7f030007;
         public static final int restaurantrow=0x7f030008;
         public static final int rounded_corner=0x7f030009;
-        public static final int searchbyaddress=0x7f03000a;
+        public static final int searchactivity=0x7f03000a;
+        public static final int searchbyaddress=0x7f03000b;
     }
     public static final class string {
         public static final int app_name=0x7f040000;

@@ -6,6 +6,14 @@ public class MostVisitedResturantObject {
 	private String address;
 	private String id;
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	MostVisitedResturantObject(){
 		setName("");
 		setNoOfTimes(0);

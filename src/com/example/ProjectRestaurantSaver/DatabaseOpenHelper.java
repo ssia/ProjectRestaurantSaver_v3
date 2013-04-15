@@ -151,7 +151,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	public Cursor get_restaurantName_timesVisited(){
 		SQLiteDatabase db = getReadableDatabase();
 		//Cursor cursor = db.query(restaurantTable, new String[] {"RName", "NoOfTimes"}, null, null, null, null, "NoOfTimes ASC");
-		String q = "SELECT RID, NoOfTimes FROM restaurants WHERE NoOfTimes != 0 ORDER BY NoOfTimes DESC;";
+		String q = "SELECT RID, RName, NoOfTimes FROM restaurants WHERE NoOfTimes != 0 ORDER BY NoOfTimes DESC;";
 		Cursor mCursor = db.rawQuery(q, null);
 
 		return mCursor;
@@ -249,6 +249,15 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 		return mCursor;
 	}
 
+	//Return the address of the restaurant obtained as argument.
+	public Cursor getRestaurantAddressesByName(String name) {
+		SQLiteDatabase db = getReadableDatabase();
+		String q = "SELECT RAddress FROM restaurants WHERE RName = " +"\"" +name + "\""+ ";";
+		Cursor mCursor = db.rawQuery(q, null);
+		return mCursor;
+	}
+
+	
 	//Get a list of the top 10 favorite restaurants
 	public Cursor getTopTenFavoriteRestaurantNames() {
 		SQLiteDatabase db = getReadableDatabase();

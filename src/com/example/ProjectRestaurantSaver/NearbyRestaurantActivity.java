@@ -7,8 +7,10 @@ import com.example.ProjectRestaurantSaver.util.RestaurantHelper;
 //import com.markupartist.android.widget.ActionBar;
 //import com.markupartist.android.widget.ActionBar.Action;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -19,7 +21,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 public class NearbyRestaurantActivity extends ListActivity implements OnClickListener{
-	private Button refreshButton;
+	private Button refreshButton, searchButton;
 	private double[] lastKnownLocation;
 	ConcurrentHashMap<String, String> restaurantMap;
 	//ActionBar action;
@@ -29,7 +31,11 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 		setContentView(R.layout.nearbyrestaurants);
 		refreshButton = (Button)findViewById(R.id.reloadButton);
 		refreshButton.setOnClickListener(this);
+		
 		restaurantMap =  new ConcurrentHashMap<String, String>();
+		
+		searchButton = (Button)findViewById(R.id.searchButton);
+		searchButton.setOnClickListener(this);
 		
 		//checks network connectivity
 		boolean checkConnection = isNetworkAvailable();
@@ -91,6 +97,23 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 				m_progressTask.execute();
 			}
 		}
+		
+		if(v.getId() == searchButton.getId() ){
+			
+			Activity child = this;
+			while(child.getParent() != null){
+				System.out.println("#####child.getParent() = "+child.getParent());
+				child = child.getParent();
+			}
+			System.out.println("#####Parent = "+ getParent());
+			TabGroup1Activity parent = (TabGroup1Activity)getParent();
+			
+	        parent.startChildActivity("Search Restaurants", new Intent(parent, SearchActivity.class));
+
+			//Intent searchIntent = new Intent(this, SearchActivity.class);
+			//startActivity(searchIntent); 
+		}
+
 	}
 	//Method to check network connectivity
 	public boolean isNetworkAvailable() {

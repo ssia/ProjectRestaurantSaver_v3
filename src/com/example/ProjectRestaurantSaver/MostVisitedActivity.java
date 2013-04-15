@@ -45,7 +45,7 @@ public class MostVisitedActivity  extends ListActivity implements OnClickListene
 			@SuppressWarnings("rawtypes")
 			ArrayList listOfRestaurantDetails = new ArrayList();
 
-			if (c != null) {
+			if (c != null && c.getCount() > 0) {
 				c.moveToFirst();
 				int i = 0;
 				while (!c.isAfterLast()) {

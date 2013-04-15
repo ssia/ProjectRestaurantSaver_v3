@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.location.Address;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,11 +65,14 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 			TextView ta = (TextView) v.findViewById(R.id.favVisited_address);
 			//Get address for the restaurant by querying the database
 			rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-			Cursor c = rd.check_restaurant_address_inDatabase(ref.getName());
+			Log.v("ref.getName() ", ref.getName());
+			Cursor c = rd.getRestaurantAddressesByName(ref.getName());
+			
+			
 			int contactColumn = c.getColumnIndex("RAddress");	
 			@SuppressWarnings("unused")
 			String favVisitedAddress = "";
-			if (c != null) {
+			if (c != null && c.getCount() > 0) {
 				c.moveToFirst();
 				favVisitedAddress = c.getString(contactColumn);
 			}
