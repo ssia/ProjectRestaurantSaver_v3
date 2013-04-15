@@ -22,12 +22,10 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 	private ListActivity m_activity;
 	private RestaurantAdapter restaurantAdapter;
 	private String[] keywords;
-	private ConcurrentHashMap<String, String> restaurantMap;
 
-	protected RestaurantHttpAsyncTask(ListActivity activity, String[] keywords, ConcurrentHashMap<String,String>mainRestaurantMap) {
+	protected RestaurantHttpAsyncTask(ListActivity activity, String[] keywords) {
 		m_activity = activity;
 		this.keywords = keywords;
-		restaurantMap = mainRestaurantMap;
 	}
 
 	@Override
@@ -64,45 +62,59 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 			//Log.v("URLdef", urldef);
 			//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.391351,-122.04566&radius=700&types=restaurant&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
 			for(String keyword: keywords) {
-				//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.387413,-122.046046&radius=2700&types=restaurant&keyword="+keyword+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
-				String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.387413,-122.046046&radius=2700&types=restaurant&keyword=subway"+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
+				URLConnection tc = null;
+				BufferedReader in = null;
+				try{
+					String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.387413,-122.046046&radius=2700&types=restaurant&keyword="+keyword+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
+					//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.387413,-122.046046&radius=2700&types=restaurant&keyword=subway"+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
+	
+					Log.v("URL", urldef);
+					URL urlPlace = new URL(urldef);    		
+					tc = urlPlace.openConnection();
+					in = new BufferedReader(new InputStreamReader(tc.getInputStream()));
+					String line, finalLine = "";
+					while ((line = in.readLine()) != null) {
+						finalLine += line;
+					}
+					System.out.println("Nearby Restaurant JSON \n"+ finalLine);
 
-				//Log.v("URL", urldef);
-				URL urlPlace = new URL(urldef);    		
-				URLConnection tc = urlPlace.openConnection();
-				BufferedReader in = new BufferedReader(new InputStreamReader(tc.getInputStream()));
-				String line, finalLine = "";
-				while ((line = in.readLine()) != null) {
-					finalLine += line;
-				}
-				JSONObject obj = new JSONObject(finalLine);
-				JSONArray ja = obj.getJSONArray("results");
-				//Parse the received JSON file           
-				for (int i = 0; i < ja.length(); i++) {
-					JSONObject jo = (JSONObject) ja.get(i);
-					RestaurantReference ref = new RestaurantReference();
-					ref.setId((jo.getString("id")));
-					ref.setName((jo.getString("name")));
-					JSONObject jb = jo.getJSONObject("geometry");
-					JSONObject jbo = jb.getJSONObject("location");
-					//Log.v("Latitude", jbo.getString("lat"));
-					//Log.v("Longitude", jbo.getString("lng"));
-					if(!restaurantMap.containsKey((jo.getString("name")))){
-						restaurantMap.put((jo.getString("name")), (jo.getString("name")));
-						//Log.v("res_id", (jo.getString("id")));
-						//Log.v("res_name", (jo.getString("name")));
-						ref.setReferenceKey(jo.getString("reference"));
-						ref.setLatitude(Double.parseDouble(jbo.getString("lat")));
-						ref.setLongitude(Double.parseDouble(jbo.getString("lng")));
-						listItems.add(ref);
+					JSONObject obj = new JSONObject(finalLine);
+					JSONArray ja = obj.getJSONArray("results");
+					//Parse the received JSON file           
+					for (int i = 0; i < ja.length(); i++) {
+						JSONObject jo = (JSONObject) ja.get(i);
+						RestaurantReference ref = new RestaurantReference();
+						ref.setId((jo.getString("id")));
+						ref.setName((jo.getString("name")));
+						JSONObject jb = jo.getJSONObject("geometry");
+						JSONObject jbo = jb.getJSONObject("location");
+						Log.v("Latitude", jbo.getString("lat"));
+						Log.v("Longitude", jbo.getString("lng"));
+						//if(!restaurantMap.containsKey((jo.getString("id")))){
+							//restaurantMap.put((jo.getString("id")), (jo.getString("name")));
+							Log.v("res_id", (jo.getString("id")));
+							Log.v("res_name", (jo.getString("name")));
+							ref.setReferenceKey(jo.getString("reference"));
+							ref.setLatitude(Double.parseDouble(jbo.getString("lat")));
+							ref.setLongitude(Double.parseDouble(jbo.getString("lng")));
+							listItems.add(ref);
+						//}
+					}
+				} finally {
+					if(in != null) {
+						in.close();
 					}
 				}
-			}
+			} 
+			
+		
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
+			throw new RuntimeException("Error while getting data from Google Places API",e);
 		}
+		Log.v("NearbyRestaurantsSearch", "Got " + listItems.size() + " restaurants");
 		return listItems;
 	}
 

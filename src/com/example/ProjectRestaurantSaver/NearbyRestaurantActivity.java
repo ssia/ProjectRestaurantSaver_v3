@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import com.example.ProjectRestaurantSaver.application.RestaurantApplication;
 import com.example.ProjectRestaurantSaver.util.RestaurantHelper;
+
 //import com.markupartist.android.widget.ActionBar;
 //import com.markupartist.android.widget.ActionBar.Action;
 
@@ -17,13 +18,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class NearbyRestaurantActivity extends ListActivity implements OnClickListener{
-	private Button refreshButton, searchButton;
+	private Button refreshButton, searchRestaurants, goToSearch;
 	private double[] lastKnownLocation;
-	ConcurrentHashMap<String, String> restaurantMap;
+	private EditText locationEditText;
+	
 	//ActionBar action;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -31,12 +36,14 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 		setContentView(R.layout.nearbyrestaurants);
 		refreshButton = (Button)findViewById(R.id.reloadButton);
 		refreshButton.setOnClickListener(this);
-		
-		restaurantMap =  new ConcurrentHashMap<String, String>();
-		
-		searchButton = (Button)findViewById(R.id.searchButton);
-		searchButton.setOnClickListener(this);
-		
+				
+		searchRestaurants = (Button)findViewById(R.id.searchButton);
+		searchRestaurants.setOnClickListener(this);
+		goToSearch = (Button)findViewById(R.id.goLocationButton);
+		goToSearch.setOnClickListener(this);
+		locationEditText = (EditText)findViewById(R.id.addressTextBox);
+		locationEditText.setVisibility(View.GONE);
+		goToSearch.setVisibility(View.GONE);
 		//checks network connectivity
 		boolean checkConnection = isNetworkAvailable();
 		if(!checkConnection){
@@ -57,7 +64,7 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 			RestaurantHttpAsyncTask m_progressTask, m_progressTask1;
 			//String[] keywords = {"", "american", "asian", "italian"};
 			String[] keywords = {"indian"};
-			m_progressTask = new RestaurantHttpAsyncTask(NearbyRestaurantActivity.this, keywords, restaurantMap);
+			m_progressTask = new RestaurantHttpAsyncTask(NearbyRestaurantActivity.this, keywords);
 			m_progressTask.setRestaurantAdapter(restaurantAdapter);
 			m_progressTask.execute();
 		}
@@ -91,14 +98,15 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 				setListAdapter(restaurantAdapter);
 				//Make a webservice call in a different thread passing Keyword for URL as a string array.
 				RestaurantHttpAsyncTask m_progressTask, m_progressTask1;
-				String[] keywords = {"", "american", "asian", "italian","mexican"};
-				m_progressTask = new RestaurantHttpAsyncTask(NearbyRestaurantActivity.this, keywords, restaurantMap);
+				//String[] keywords = {"", "american", "asian", "italian","mexican"};
+				String[] keywords = {"Chinese"};
+				m_progressTask = new RestaurantHttpAsyncTask(NearbyRestaurantActivity.this, keywords);
 				m_progressTask.setRestaurantAdapter(restaurantAdapter);
 				m_progressTask.execute();
 			}
 		}
 		
-		if(v.getId() == searchButton.getId() ){
+		if(v.getId() == goToSearch.getId() ){
 			
 			Activity child = this;
 			while(child.getParent() != null){
@@ -108,10 +116,47 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 			System.out.println("#####Parent = "+ getParent());
 			TabGroup1Activity parent = (TabGroup1Activity)getParent();
 			
-	        parent.startChildActivity("Search Restaurants", new Intent(parent, SearchActivity.class));
+	        //parent.startChildActivity("Search Restaurants", new Intent(parent, SearchActivity.class));
 
-			//Intent searchIntent = new Intent(this, SearchActivity.class);
-			//startActivity(searchIntent); 
+			InputMethodManager imm = (InputMethodManager)getSystemService(
+				      Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(locationEditText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			
+			//changes ** restaurantAdapter to RestaurantAdapter1 to test & application to application1	
+			RestaurantApplication application1 = (RestaurantApplication) this.getApplication();
+			RestaurantAdapter restaurantAdapter1 = new RestaurantAdapter(this, R.layout.restaurantrow,  R.id.label, new ArrayList<RestaurantReference>());
+			restaurantAdapter1.setLastKnownLocation(lastKnownLocation);  
+			//set a global variable for the RestaurantAdapter in the RestaurantApplication class.
+			application1.setRestaurantAdapter(restaurantAdapter1);
+			//Set the adapter first and then update it when the RestaurantHttpAsyncTask makes a web service call.
+			setListAdapter(restaurantAdapter1);
+			//Make a webservice call in a different thread passing Keyword for URL as a string array.
+			RestaurantHttpAsyncTaskTextSearch m_progressTask, m_progressTask1;
+			String keywords = locationEditText.getText().toString();
+			keywords = keywords.replaceAll(" ", "%20");
+			keywords = keywords.replaceAll(",", "%20");
+			m_progressTask = new RestaurantHttpAsyncTaskTextSearch (NearbyRestaurantActivity.this, keywords);
+			m_progressTask.setRestaurantAdapter(restaurantAdapter1);
+			m_progressTask.execute();
+
+			locationEditText.setVisibility(View.GONE);
+			goToSearch.setVisibility(View.GONE);
+		}
+		if(v.getId() == searchRestaurants.getId() ){
+			
+			//check network connectivity before refresh
+			boolean checkConnection = isNetworkAvailable();
+			if(!checkConnection){
+				Toast.makeText(getApplicationContext(), "Check your Network Connectivity", Toast.LENGTH_LONG).show();
+			}
+			if(checkConnection){
+				/*Intent intent = new Intent(this, FindByLocationActivity.class);
+                startActivity(intent);  */
+
+				goToSearch.setVisibility(View.VISIBLE);
+				locationEditText.setVisibility(View.VISIBLE);
+				
+			}
 		}
 
 	}

@@ -23,7 +23,7 @@ public class ProjectRestaurantSaver extends TabActivity {
 
 		//AddFlags helps to add flags to call the intent again helping to refresh the tab every time it is clicked.
 		//We are not adding flags to the first tab as we don't want a web service call every time we click it.
-		firstTabSpec.setIndicator("NearBy Restaurants").setContent(new Intent(this, TabGroup1Activity.class));
+		firstTabSpec.setIndicator("Restaurants").setContent(new Intent(this, TabGroup1Activity.class));
 		secondTabSpec.setIndicator("Favorite Restaurants").setContent(new Intent(this, FavoriteRestaurantActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 		thirdTabSpec.setIndicator("Most Visited Restaurants").setContent(new Intent(this, MostVisitedActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 		tabHost.addTab(firstTabSpec);

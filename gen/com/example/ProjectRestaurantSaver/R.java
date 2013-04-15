@@ -32,18 +32,20 @@ public final class R {
     public static final class id {
         public static final int FacebookShareButton=0x7f050000;
         public static final int FacebookShareNotButton=0x7f050001;
-        public static final int add_button=0x7f050013;
-        public static final int contactButton=0x7f050018;
-        public static final int directionsButton=0x7f050017;
-        public static final int distance_label=0x7f050016;
+        public static final int add_button=0x7f050015;
+        public static final int addressTextBox=0x7f050013;
+        public static final int contactButton=0x7f05001a;
+        public static final int directionsButton=0x7f050019;
+        public static final int distance_label=0x7f050018;
         public static final int favContactButton=0x7f050006;
         public static final int favDelete=0x7f050008;
         public static final int favDirectionsButton=0x7f050007;
         public static final int favName=0x7f050003;
         public static final int favPublishButton=0x7f050002;
         public static final int favVisited_address=0x7f050004;
-        public static final int fav_button=0x7f050014;
-        public static final int label=0x7f050015;
+        public static final int fav_button=0x7f050016;
+        public static final int goLocationButton=0x7f050014;
+        public static final int label=0x7f050017;
         public static final int list=0x7f050009;
         public static final int mVisistedPublishButton=0x7f05000a;
         public static final int mVisitedContactButton=0x7f05000e;
