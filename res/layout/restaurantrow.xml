@@ -34,10 +34,20 @@
     android:layout_height="fill_parent"
     android:typeface="sans"
     android:layout_toRightOf="@+id/fav_button"
-    android:textSize="18sp"
+    android:textSize="16sp"
     android:textColor="#363535">
     </TextView>
- 
+	<TextView
+    android:id="@+id/address_label"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:typeface="sans"
+    android:layout_below="@+id/fav_button"
+    android:layout_alignParentLeft="true"
+    android:layout_marginLeft="6dip"
+    android:textSize="12sp"
+    android:textColor="#363535">
+    </TextView> 
  <!--  android:layout_marginTop="36dip"
      android:layout_marginLeft="8dip"-->
    	<TextView
@@ -49,19 +59,22 @@
 	android:layout_below="@+id/label"
     android:layout_alignParentRight="true"
     android:textSize="12sp"
+    android:layout_marginRight="6dip"
     android:textColor="#363535">
     </TextView>
-    
+ 
    <Button
     android:id="@+id/directionsButton"
     android:text="Map"
     android:textColor="#363535"
+    android:textSize="16sp"
     android:background="@layout/rounded_corner"
     android:layout_height="35dp"
     android:layout_margin="5dp"
+    android:typeface="sans"
     android:layout_width="100dp"
     android:maxHeight="10dp"
-    android:layout_below="@+id/distance_label"
+    android:layout_below="@+id/address_label"
     android:layout_alignParentRight="true"
     android:layout_marginTop="6dip">
     </Button>  	
@@ -69,14 +82,16 @@
    <Button
     android:id="@+id/contactButton"
     android:text="Call"
+    android:textSize="16sp"
     android:textColor="#363535"
     android:background="@layout/rounded_corner"
     android:layout_height="35dp"
     android:layout_margin="5dp"
+    android:typeface="sans"
     android:layout_width="100dp"
     android:layout_marginTop="6dip"
-    android:layout_below="@+id/distance_label"
+    android:layout_below="@+id/address_label"
     android:layout_toLeftOf="@+id/directionsButton">
    	</Button>
-   	  
+
 </RelativeLayout>

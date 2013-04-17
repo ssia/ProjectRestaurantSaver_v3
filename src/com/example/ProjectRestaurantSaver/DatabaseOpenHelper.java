@@ -17,7 +17,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	static final String restaurantContact = "RContact";
 	static final String restaurantFavorite = "RFavorite";
 	static final String restaurantWebsite = "Rwebsite";
-	static final String restaurantId = "RID";
+	static final String restaurantId = "_id";
 	static final String restaurantRatings = "Rrating";
 	private static final String CREATE_RESTAURANT_SQL=
 		"CREATE TABLE " + restaurantTable + " ("
@@ -73,7 +73,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * Insert the name of the restaurant, the number of times and address of the restaurant as the user selects the
 	 * restaurant to add to the "Most visited list"
 	 */
-	public void insert_mostVisited(String id, String name, int times, String address, String contact){
+	public void insert_mostVisited(String id, String name, int times, String address, String contact, String website){
 		SQLiteDatabase db = getWritableDatabase();
 		ContentValues values = new ContentValues();
 		
@@ -82,6 +82,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 		values.put(noOfTimes, times);
 		values.put(restaurantAddress, address);
 		values.put(restaurantContact, contact);
+		values.put(restaurantWebsite, website);
 		values.put(restaurantFavorite, 0);
 		db.insert(restaurantTable, null, values);
 		db.close();
@@ -91,7 +92,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * Insert the name of the restaurant, the number of times and address of the restaurant as the user selects the
 	 * restaurant to add to the "Most visited list"
 	 */
-	public void insert_fav(String id, String name, String address, String contact){
+	public void insert_fav(String id, String name, String address, String contact, String website){
 		SQLiteDatabase db = getWritableDatabase();
 		ContentValues values = new ContentValues();
 		
@@ -100,6 +101,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 		values.put(restaurantFavorite, 1);
 		values.put(restaurantAddress, address);
 		values.put(restaurantContact, contact);
+		values.put(restaurantWebsite, website);
 		values.put(noOfTimes, 0);
 		db.insert(restaurantTable, null, values);
 		db.close();
@@ -126,7 +128,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	public Cursor check_restaurant_visited_inDatabase(String res_id){
 
 		SQLiteDatabase db = getReadableDatabase();
-		String q = "SELECT * FROM restaurants WHERE RID = " +"\"" +res_id + "\""+ ";";
+		String q = "SELECT * FROM restaurants WHERE _id = " +"\"" +res_id + "\""+ ";";
 		Cursor mCursor = db.rawQuery(q, null);
 		return mCursor;
 	}
@@ -134,7 +136,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	public Cursor getStats() {
 		
 		SQLiteDatabase db = getReadableDatabase();
-		String q = "SELECT RName, SUM(NoOfTimes), AVG(Rrating) FROM restaurants GROUP BY LOWER(RName);";
+		String q = "SELECT ROWID as _id, RName, NoOfTimes, Rrating FROM (SELECT RName, SUM(NoOfTimes) as NoOfTimes, SUM(CASE WHEN Rrating > 0 THEN Rrating ELSE 0 END)/COUNT(CASE WHEN Rrating > 0 THEN Rrating ELSE 0 END)  as Rrating FROM restaurants GROUP BY LOWER(RName));";
 		Cursor mCursor = db.rawQuery(q, null);
 		return mCursor;
 		
@@ -150,7 +152,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	public Cursor check_restaurant_favorite_inDatabase(String res_id){
 
 		SQLiteDatabase db = getReadableDatabase();
-		String q = "SELECT * FROM restaurants WHERE RID = " +"\"" +res_id + "\""+ ";";
+		String q = "SELECT * FROM restaurants WHERE _id = " +"\"" +res_id + "\""+ ";";
 		Cursor mCursor = db.rawQuery(q, null);
 		return mCursor;
 	}
@@ -161,7 +163,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	public Cursor get_restaurantName_timesVisited(){
 		SQLiteDatabase db = getReadableDatabase();
 		//Cursor cursor = db.query(restaurantTable, new String[] {"RName", "NoOfTimes"}, null, null, null, null, "NoOfTimes ASC");
-		String q = "SELECT RID, RName, NoOfTimes FROM restaurants WHERE NoOfTimes != 0 ORDER BY NoOfTimes DESC;";
+		String q = "SELECT _id, RName, NoOfTimes FROM restaurants WHERE NoOfTimes != 0 ORDER BY NoOfTimes DESC;";
 		Cursor mCursor = db.rawQuery(q, null);
 
 		return mCursor;
@@ -174,7 +176,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	public Cursor getFavoriteRestaurantNames(){
 		SQLiteDatabase db = getReadableDatabase();
 		//Cursor cursor = db.query(restaurantTable, new String[] {"RName", "NoOfTimes"}, null, null, null, null, "NoOfTimes ASC");
-		String q = "SELECT RName, RID, Rrating FROM restaurants WHERE RFavorite == 1 Order By Rrating DESC;";
+		String q = "SELECT RName, _id, Rrating FROM restaurants WHERE RFavorite == 1 Order By Rrating DESC;";
 		Cursor mCursor = db.rawQuery(q, null);
 		return mCursor;
 	}
@@ -246,7 +248,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	//Return the contact phone number of the restaurant obtain as argument.
 	public Cursor check_restaurant_contact_inDatabase(String id) {
 		SQLiteDatabase db = getReadableDatabase();
-		String q = "SELECT RContact FROM restaurants WHERE RID = " +"\"" +id + "\""+ ";";
+		String q = "SELECT RContact FROM restaurants WHERE _id = " +"\"" +id + "\""+ ";";
 		Cursor mCursor = db.rawQuery(q, null);
 		return mCursor;		
 	}
@@ -254,7 +256,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	//Return the address of the restaurant obtained as argument.
 	public Cursor check_restaurant_address_inDatabase(String id) {
 		SQLiteDatabase db = getReadableDatabase();
-		String q = "SELECT RAddress FROM restaurants WHERE RID = " +"\"" +id + "\""+ ";";
+		String q = "SELECT RAddress FROM restaurants WHERE _id = " +"\"" +id + "\""+ ";";
 		Cursor mCursor = db.rawQuery(q, null);
 		return mCursor;
 	}

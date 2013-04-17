@@ -76,7 +76,7 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 					while ((line = in.readLine()) != null) {
 						finalLine += line;
 					}
-					System.out.println("Nearby Restaurant JSON \n"+ finalLine);
+					//System.out.println("Nearby Restaurant JSON \n"+ finalLine);
 
 					JSONObject obj = new JSONObject(finalLine);
 					JSONArray ja = obj.getJSONArray("results");
@@ -86,14 +86,16 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 						RestaurantReference ref = new RestaurantReference();
 						ref.setId((jo.getString("id")));
 						ref.setName((jo.getString("name")));
+						ref.setAddress(jo.getString("vicinity"));
+						//Log.v("RestaurantHTTP Task", " vicinity = "+jo.getString("vicinity"));
 						JSONObject jb = jo.getJSONObject("geometry");
 						JSONObject jbo = jb.getJSONObject("location");
 						//Log.v("Latitude", jbo.getString("lat"));
 						//Log.v("Longitude", jbo.getString("lng"));
 						//if(!restaurantMap.containsKey((jo.getString("id")))){
 							//restaurantMap.put((jo.getString("id")), (jo.getString("name")));
-							Log.v("res_id", (jo.getString("id")));
-							Log.v("res_name", (jo.getString("name")));
+							//Log.v("res_id", (jo.getString("id")));
+							//Log.v("res_name", (jo.getString("name")));
 							ref.setReferenceKey(jo.getString("reference"));
 							ref.setLatitude(Double.parseDouble(jbo.getString("lat")));
 							ref.setLongitude(Double.parseDouble(jbo.getString("lng")));
@@ -114,7 +116,7 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 			e.printStackTrace();
 			throw new RuntimeException("Error while getting data from Google Places API",e);
 		}
-		Log.v("NearbyRestaurantsSearch", "Got " + listItems.size() + " restaurants");
+		//Log.v("NearbyRestaurantsSearch", "Got " + listItems.size() + " restaurants");
 		return listItems;
 	}
 

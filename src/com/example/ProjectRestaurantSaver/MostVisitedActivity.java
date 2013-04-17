@@ -51,7 +51,7 @@ public class MostVisitedActivity  extends ListActivity implements OnClickListene
 				while (!c.isAfterLast()) {
 					String timesName = c.getString(c.getColumnIndex("RName"));
 					int noOfTimes = c.getInt(c.getColumnIndex("NoOfTimes"));
-					String id = c.getString(c.getColumnIndex("RID"));
+					String id = c.getString(c.getColumnIndex("_id"));
 					MostVisitedResturantObject obj = new MostVisitedResturantObject();
 					obj.setName(timesName);
 					obj.setId(id);// Set the Restaurant_Id for the MostVisitedResturantObject

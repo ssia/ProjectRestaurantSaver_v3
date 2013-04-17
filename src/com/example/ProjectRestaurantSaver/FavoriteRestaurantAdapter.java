@@ -171,7 +171,7 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 						rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 						item.setRating(rating);
 						//Log.v("Adding In Database", item.getName()+ " "+item.getId()+" "+String.valueOf(rating));
-						//System.out.println("Updated Rating in Database" +rd.updateRatingInDatabase(item.getId(), rating));//changed from item.getName() to item.getId() due to adding Res_Id as Primary_Key in Database	    				
+						rd.updateRatingInDatabase(item.getId(), rating);//changed from item.getName() to item.getId() due to adding Res_Id as Primary_Key in Database	    				
 					}
 				}
 			};

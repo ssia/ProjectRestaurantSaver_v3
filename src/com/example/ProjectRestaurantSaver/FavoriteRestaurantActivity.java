@@ -51,7 +51,7 @@ public class FavoriteRestaurantActivity extends ListActivity implements OnClickL
 				while (!c.isAfterLast()) {
 					String favName = c.getString(c.getColumnIndex("RName"));
 					String ratings = c.getString(c.getColumnIndex("Rrating"));
-					String id = c.getString(c.getColumnIndex("RID"));// Set the Restaurant_Id for the FavoriteRestaurantObject
+					String id = c.getString(c.getColumnIndex("_id"));// Set the Restaurant_Id for the FavoriteRestaurantObject
 					FavoriteRestaurantObject obj = new FavoriteRestaurantObject();
 					obj.setName(favName);
 					obj.setId(id);

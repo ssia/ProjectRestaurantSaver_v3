@@ -3,31 +3,31 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-	<Button
+
+	<Button 
+        android:id="@+id/reloadButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:text=" Nearby Restaurants"
+        android:layout_alignParentLeft="true"
+        android:textColor="#013b08"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:background="@drawable/new_button"
+        android:layout_marginTop="10dip">
+ 	</Button> 
+ 	<Button
 		android:id="@+id/searchButton"
-		android:text="Search Restaurants"
+		android:text="Search Restaurants "
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/new_button"
         android:layout_marginTop="10dip"
         android:textColor="#013b08"
         android:textSize="12sp"
-        android:textStyle="bold"
-        android:layout_alignParentLeft="TRUE">
+        android:layout_toRightOf="@+id/reloadButton"
+        android:textStyle="bold">
 	</Button>    
-	<Button 
-        android:id="@+id/reloadButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        android:layout_centerHorizontal="TRUE"
-        android:text="Find Nearby Restaurants"
-        android:textColor="#013b08"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:layout_toRightOf="@+id/searchButton"
-        android:background="@drawable/new_button"
-        android:layout_marginTop="10dip">
- 	</Button> 
  	<!--         android:layout_marginRight="70dip" 
  	    	android:layout_alignParentRight="TRUE"-->
  	    	

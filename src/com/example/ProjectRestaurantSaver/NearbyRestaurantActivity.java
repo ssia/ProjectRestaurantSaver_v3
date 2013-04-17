@@ -110,7 +110,7 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 			
 			Activity child = this;
 			while(child.getParent() != null){
-				System.out.println("#####child.getParent() = "+child.getParent());
+				//System.out.println("#####child.getParent() = "+child.getParent());
 				child = child.getParent();
 			}
 			System.out.println("#####Parent = "+ getParent());
@@ -143,19 +143,24 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 			goToSearch.setVisibility(View.GONE);
 		}
 		if(v.getId() == searchRestaurants.getId() ){
-			
-			//check network connectivity before refresh
-			boolean checkConnection = isNetworkAvailable();
-			if(!checkConnection){
-				Toast.makeText(getApplicationContext(), "Check your Network Connectivity", Toast.LENGTH_LONG).show();
+			if(goToSearch.isShown() == true){
+				goToSearch.setVisibility(View.GONE);
+				locationEditText.setVisibility(View.GONE);
 			}
-			if(checkConnection){
-				/*Intent intent = new Intent(this, FindByLocationActivity.class);
-                startActivity(intent);  */
-
-				goToSearch.setVisibility(View.VISIBLE);
-				locationEditText.setVisibility(View.VISIBLE);
-				
+			else if(goToSearch.isShown() == false){
+				//check network connectivity before refresh
+				boolean checkConnection = isNetworkAvailable();
+				if(!checkConnection){
+					Toast.makeText(getApplicationContext(), "Check your Network Connectivity", Toast.LENGTH_LONG).show();
+				}
+				if(checkConnection){
+					/*Intent intent = new Intent(this, FindByLocationActivity.class);
+	                startActivity(intent);  */
+	
+					goToSearch.setVisibility(View.VISIBLE);
+					locationEditText.setVisibility(View.VISIBLE);
+					
+				}
 			}
 		}
 
@@ -166,10 +171,10 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 		= (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 		if (activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting()) {
-			Log.d("network", "Network available:true");
+			//Log.d("network", "Network available:true");
 			return true;
 		} else {
-			Log.d("network", "Network available:false");
+			//Log.d("network", "Network available:false");
 			return false;
 		}
 	}

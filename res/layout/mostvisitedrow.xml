@@ -11,26 +11,29 @@
     android:id="@+id/mVisited_name"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textSize="22sp"
+    android:textSize="16sp"
+    android:typeface="sans"
     android:layout_marginLeft="6dp"
-    android:textColor="#000000">
+    android:textColor="#363535">
     </TextView>
  	<TextView
     android:id="@+id/mVisited_address"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textSize="8sp"
+    android:textSize="12sp"
+    android:typeface="sans"
     android:layout_marginLeft="6dp"
     android:layout_below="@+id/mVisited_name"
-    android:textColor="#000000">
+    android:textColor="#363535">
     </TextView>
     <TextView
     android:id="@+id/noOfTimes"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textSize="15sp"
+    android:textSize="16sp"
+    android:typeface="sans"
     android:layout_marginLeft="6dp"
-    android:textColor="#000000"
+    android:textColor="#363535"
     android:layout_below="@+id/mVisited_address">
     </TextView>
     <Button
@@ -39,8 +42,11 @@
     android:background="@layout/rounded_corner"
     android:layout_height="35dp"
     android:layout_margin="5dp"
+    android:typeface="sans"
     android:layout_width="100dp"
-    android:textColor="#000000"
+    android:textSize="16sp"
+    android:layout_marginLeft="3dip"
+    android:textColor="#363535"
     android:layout_below="@+id/noOfTimes">
    	</Button>
    	
@@ -50,9 +56,11 @@
     android:background="@layout/rounded_corner"
     android:layout_height="35dp"
     android:layout_margin="5dp"
+    android:textSize="16sp"
     android:layout_width="100dp"
     android:maxHeight="10dp"
-    android:textColor="#000000"
+    android:textColor="#363535"
+    android:typeface="sans"
     android:layout_below="@+id/noOfTimes"
     android:layout_toRightOf="@+id/mVisitedContactButton">
     </Button>  	
@@ -62,9 +70,11 @@
     android:background="@layout/rounded_corner"
     android:layout_height="35dp"
     android:layout_margin="5dp"
+    android:textSize="16sp"
+    android:typeface="sans"
     android:layout_width="100dp"
     android:maxHeight="10dp"
-    android:textColor="#000000"
+    android:textColor="#363535"
     android:layout_below="@+id/noOfTimes"
     android:layout_toRightOf="@+id/mVisitedDirectionsButton">
     </Button>  	

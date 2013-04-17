@@ -11,24 +11,33 @@
     android:id="@+id/favName"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:textSize="25sp"
-    android:textColor="#000000">
+    android:textSize="16sp"
+    android:typeface="sans"
+    android:layout_marginLeft="6dip"
+    android:layout_marginBottom="3dip"
+    android:textColor="#363535">
     </TextView>
     <TextView
     android:id="@+id/favVisited_address"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textSize="8sp"
+    android:textSize="12sp"
+    android:typeface="sans"
     android:layout_marginLeft="6dp"
     android:layout_below="@+id/favName"
-    android:textColor="#000000">
+    android:textColor="#363535">
     </TextView>
 	<RatingBar android:id="@+id/ratingbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:numStars="5"
+        android:scaleX=".70"
+        android:scaleY=".70"
+        android:layout_gravity="left"
+        android:layout_alignParentLeft="true"
         android:layout_below="@+id/favVisited_address"
-        android:stepSize="1.0">
+        android:stepSize="1.0"
+        style="?android:attr/ratingBarStyleIndicator">
     </RatingBar>
     <Button
     android:id="@+id/favContactButton"
@@ -36,8 +45,10 @@
     android:background="@layout/rounded_corner"
     android:layout_height="35dp"
     android:layout_margin="5dp"
+    android:textSize="16sp"
+    android:typeface="sans"
     android:layout_width="100dp"
-    android:textColor="#000000"
+    android:textColor="#363535"
     android:layout_below="@+id/ratingbar">
    	</Button>
    	
@@ -48,19 +59,23 @@
     android:layout_height="35dp"
     android:layout_margin="5dp"
     android:layout_width="100dp"
+    android:typeface="sans"
     android:maxHeight="10dp"
-    android:textColor="#000000"
+    android:textSize="16sp"
+    android:textColor="#363535"
     android:layout_below="@+id/ratingbar"
     android:layout_toRightOf="@+id/favContactButton">
     </Button>  	
  	<Button
     android:id="@+id/favDelete"
     android:text="Delete"
-    android:textColor="#000000"
+    android:textColor="#363535"
     android:background="@layout/rounded_corner"
     android:layout_height="35dp"
     android:layout_margin="5dp"
     android:paddingBottom="5dp"
+    android:typeface="sans"
+    android:textSize="16sp"
     android:layout_width="100dp"
     android:maxHeight="10dp"
     android:layout_below="@+id/ratingbar"

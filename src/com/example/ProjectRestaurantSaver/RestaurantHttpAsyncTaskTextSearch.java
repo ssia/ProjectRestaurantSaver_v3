@@ -43,7 +43,7 @@ public class RestaurantHttpAsyncTaskTextSearch extends AsyncTask<Void, Void, Arr
 				//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.391156,-122.080564&radius=700&types=restaurant&keyword="+keyword+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
 				
 				String urldef = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants%20"+keywords+"&sensor=true&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
-				Log.v("***URL", urldef);
+				//Log.v("***URL", urldef);
 				URL urlPlace = new URL(urldef);    		
 				URLConnection tc = urlPlace.openConnection();
 				in = new BufferedReader(new InputStreamReader(tc.getInputStream()));
@@ -59,14 +59,16 @@ public class RestaurantHttpAsyncTaskTextSearch extends AsyncTask<Void, Void, Arr
 				for (int i = 0; i < ja.length(); i++) {
 					JSONObject jo = (JSONObject) ja.get(i);
 					RestaurantReference ref = new RestaurantReference();
+					ref.setId((jo.getString("id")));
 					ref.setName((jo.getString("name")));
+					ref.setAddress(jo.getString("formatted_address"));
 					JSONObject jb = jo.getJSONObject("geometry");
 					JSONObject jbo = jb.getJSONObject("location");
 					//Log.v("Latitude", jbo.getString("lat"));
 					//Log.v("Longitude", jbo.getString("lng"));
 					//if(!restaurantMap.containsKey((jo.getString("name")))){
 					//	restaurantMap.put((jo.getString("name")), (jo.getString("name")));
-						Log.v("res_name", (jo.getString("name")));
+						//Log.v("res_name", (jo.getString("name")));
 						ref.setReferenceKey(jo.getString("reference"));
 						ref.setLatitude(Double.parseDouble(jbo.getString("lat")));
 						ref.setLongitude(Double.parseDouble(jbo.getString("lng")));

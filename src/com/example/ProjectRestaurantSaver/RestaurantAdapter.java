@@ -69,14 +69,19 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 		Button dialButton = (Button) v.findViewById(R.id.contactButton);
 		Button directionsButton = (Button) v.findViewById(R.id.directionsButton);
 		TextView distanceLabel = (TextView) v.findViewById(R.id.distance_label);
+		TextView addressLabel = (TextView) v.findViewById(R.id.address_label);
 
 		//check if the restaurant is already marked as favorite
 		RestaurantReference ref = dataObjects.get(position);
 		if (ref != null) {
 			TextView tt = (TextView) v.findViewById(R.id.label);
-			if (tt != null) {
+			if (ref.getName() != null) {
 				tt.setText(ref.getName());                            
 			}
+			if(ref.getAddress() != null){
+				addressLabel.setText(ref.getAddress());
+			}
+
 			String destinationAddress = findAddressfromLatLng(ref.getLatitude(), ref.getLongitude());
 			destinationAddress = destinationAddress.replaceAll("(\\r|\\n)", "");
 			//Log.v("destination address=", destinationAddress);
@@ -106,6 +111,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 				String distanceinMiles= jbo.getString("text");
 				//Log.v("distanceinmiles", distanceinMiles);
 				distanceLabel.setText(distanceinMiles);
+				
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -151,7 +157,11 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 					String resId = item.getId();
 					RestaurantDetails details = fetchRestaurantDetails(item);
 					String address = details.getAddress();
-					String contact = details.getPhoneNumber();					
+					String contact = details.getPhoneNumber();		
+					String website = details.getWebsite();//adding website link
+					if(website == null)
+						website = "";
+					Log.v("Restaurant Adapter", "website= "+website);
 					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 					Cursor c = rd.check_restaurant_visited_inDatabase(resId);
 					try{
@@ -159,7 +169,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 						if (c != null) {
 							c.moveToFirst();
 							if (c.isFirst()) {
-								int firstNameColumn = c.getColumnIndex("RID");
+								int firstNameColumn = c.getColumnIndex("_id");
 								String firstName = c.getString(firstNameColumn);								
 								int timesNameColumn = c.getColumnIndex("NoOfTimes");
 								String timesName = c.getString(timesNameColumn);
@@ -169,7 +179,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 								rd.updateTimesInDatabase(resId, num); //???if the restaurant was already visited in the past increase the number of visits by 1
 							}
 							else{ //create a new entry for the restaurant
-								rd.insert_mostVisited(resId, nameOfRes, 1, address, contact);
+								rd.insert_mostVisited(resId, nameOfRes, 1, address, contact, website);
 							}
 						}	
 					} 
@@ -205,7 +215,9 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 					RestaurantDetails details = fetchRestaurantDetails(item);
 					String address = details.getAddress();
 					String contact = details.getPhoneNumber();
-
+					String website = details.getWebsite();//adding website link
+					if(website == null)
+						website = "";
 					ImageButton btn = (ImageButton)v;
 					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 					System.out.println(item.getName() + " get fav = "+ item + " "+item.isInFavorites());
@@ -220,7 +232,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 							//Log.v("Restaurant Adapter, Column No. of RName =  ", ""+firstNameColumn);
 							c.moveToFirst();
 							if (c.isFirst()) {
-								int firstNameColumn = c.getColumnIndex("RID");	
+								int firstNameColumn = c.getColumnIndex("_id");	
 								String firstName = c.getString(firstNameColumn);
 								int favNameColumn = c.getColumnIndex("RFavorite");
 								String favName = c.getString(favNameColumn);
@@ -228,7 +240,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 								c.moveToFirst();
 								rd.favTimesInDatabase(resId);
 							} else{
-								rd.insert_fav(resId, nameOfRes, address, contact);
+								rd.insert_fav(resId, nameOfRes, address, contact, website);
 							}
 						}
 
