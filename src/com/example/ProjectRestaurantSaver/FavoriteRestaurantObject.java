@@ -2,7 +2,7 @@ package com.example.ProjectRestaurantSaver;
 
 public class FavoriteRestaurantObject {
 	private String name;
-	private int rating;
+	private float rating;
 	private String address;
 	private String id;
 
@@ -27,11 +27,11 @@ public class FavoriteRestaurantObject {
 		return name;
 	}
 
-	public void setRating(int ratings) {
+	public void setRating(float ratings) {
 		rating = ratings;
 	}
 
-	public int getRating() {
+	public float getRating() {
 		return rating;
 	}
 

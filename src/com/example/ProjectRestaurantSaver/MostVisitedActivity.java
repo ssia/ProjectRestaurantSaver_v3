@@ -17,19 +17,25 @@ import android.widget.Button;
 
 public class MostVisitedActivity  extends ListActivity implements OnClickListener{
 	private DatabaseOpenHelper rd;
-	private Button publishButton;
+	private Button publishButton, sortByName, sortByTimes;
 	private ArrayList<MostVisitedResturantObject> listItems;
 	private double[] lastKnownLocation;
-
+	private MostVisitedAdapter listAdapter;
+	private int timesGlobalVar, nameGlobalVar;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mostvisited);
-
+		timesGlobalVar = 0; nameGlobalVar = 0;
 		lastKnownLocation = RestaurantHelper.getLastKnownLocation(this);
 		publishButton = (Button)findViewById(R.id.mVisistedPublishButton);
 		publishButton.setOnClickListener(this);
-		MostVisitedAdapter listAdapter = new MostVisitedAdapter(this, R.layout.mostvisitedrow,  R.id.mVisited_name, this.fetchRestaurantsList());
+		sortByName = (Button)findViewById(R.id.mVisitedSortByName);
+		sortByName.setOnClickListener(this);
+		sortByTimes = (Button)findViewById(R.id.mVisitedSortByTimes);
+		sortByTimes.setOnClickListener(this);
+		
+		listAdapter = new MostVisitedAdapter(this, R.layout.mostvisitedrow,  R.id.mVisited_name, this.fetchRestaurantsList());
 		listAdapter.setLastKnownLocation(lastKnownLocation);
 		listAdapter.notifyDataSetChanged();
 		setListAdapter(listAdapter);
@@ -37,22 +43,38 @@ public class MostVisitedActivity  extends ListActivity implements OnClickListene
 	}
 	private List<MostVisitedResturantObject> fetchRestaurantsList() {
 		// Get Restaurant name and no of times visited from database
+		listItems = new ArrayList<MostVisitedResturantObject>();
+		listItems = getRestaurantsSortedbyTimes(listItems);
+		return listItems;
+	}
+	private List<MostVisitedResturantObject> fetchRestaurantsListByName() {
+		// Get Restaurant name and no of times visited from database
+		listItems = new ArrayList<MostVisitedResturantObject>();
+		listItems = getRestaurantsSortedbyName(listItems);
+		return listItems;
+	}
+	private ArrayList<MostVisitedResturantObject> getRestaurantsSortedbyTimes(
+			ArrayList<MostVisitedResturantObject> listItems2) {
 		try{
-			listItems = new ArrayList<MostVisitedResturantObject>();
-
 			rd = DatabaseOpenHelper.getOrCreateInstance(getApplicationContext(), "restaurantSaver.db", null, 0);
-			Cursor c = rd.get_restaurantName_timesVisited();
-			@SuppressWarnings("rawtypes")
-			ArrayList listOfRestaurantDetails = new ArrayList();
-
+			Cursor c;
+			if(timesGlobalVar == 0){
+				c = rd.get_restaurantName_timesVisitedAsc();
+				timesGlobalVar = 1;
+			}
+			else{
+				c = rd.get_restaurantName_timesVisitedDesc();
+				timesGlobalVar = 0;
+			}
+			
 			if (c != null && c.getCount() > 0) {
 				c.moveToFirst();
-				int i = 0;
 				while (!c.isAfterLast()) {
 					String timesName = c.getString(c.getColumnIndex("RName"));
 					int noOfTimes = c.getInt(c.getColumnIndex("NoOfTimes"));
 					String id = c.getString(c.getColumnIndex("_id"));
 					MostVisitedResturantObject obj = new MostVisitedResturantObject();
+					//Log.v("MostVisited", timesName);
 					obj.setName(timesName);
 					obj.setId(id);// Set the Restaurant_Id for the MostVisitedResturantObject
 					obj.setNoOfTimes(noOfTimes);
@@ -60,11 +82,53 @@ public class MostVisitedActivity  extends ListActivity implements OnClickListene
 					c.moveToNext();
 				}
 			}
-		}
-		catch(Exception e){
-			e.printStackTrace();
+		}catch(Throwable th){
+			th.printStackTrace();
+			throw new RuntimeException("Query for restaurants sorted by number of times failed", th);
+
 		}
 		return listItems;
+
+	}
+	
+	@SuppressWarnings("unused")
+	private ArrayList<MostVisitedResturantObject> getRestaurantsSortedbyName(
+			ArrayList<MostVisitedResturantObject> listItems2) {
+		try{
+			rd = DatabaseOpenHelper.getOrCreateInstance(getApplicationContext(), "restaurantSaver.db", null, 0);
+			Cursor c;
+			if(nameGlobalVar == 0){
+				c = rd.sortVisitedRestaurantsByNameAsc();
+				nameGlobalVar = 1;
+			}
+			else{
+				c = rd.sortVisitedRestaurantsByNameDesc();
+				nameGlobalVar = 0;
+			}
+	
+			if (c != null && c.getCount() > 0) {
+				c.moveToFirst();
+				while (!c.isAfterLast()) {
+					String timesName = c.getString(c.getColumnIndex("RName"));
+					int noOfTimes = c.getInt(c.getColumnIndex("NoOfTimes"));
+					String id = c.getString(c.getColumnIndex("_id"));
+					MostVisitedResturantObject obj = new MostVisitedResturantObject();
+					obj.setName(timesName);
+					//Log.v("MostVisited By Name", timesName);
+
+					obj.setId(id);// Set the Restaurant_Id for the MostVisitedResturantObject
+					obj.setNoOfTimes(noOfTimes);
+					listItems.add(obj);
+					c.moveToNext();
+				}
+			}
+		}catch(Throwable th){
+			th.printStackTrace();
+			throw new RuntimeException("Query for restaurants sorted by number of times failed", th);
+
+		}
+		return listItems;
+
 	}
 	@Override
 	public void onClick(View v) {
@@ -88,6 +152,20 @@ public class MostVisitedActivity  extends ListActivity implements OnClickListene
 			//Log.v("facebook message", postMessage);
 			postOnFacebookWallIntent.putExtra("facebookMessage", postMessage);
 			startActivity(postOnFacebookWallIntent);		
-		}			
+		}
+		
+		if(v.getId() == sortByName.getId()){
+			listAdapter = new MostVisitedAdapter(this, R.layout.mostvisitedrow,  R.id.mVisited_name, this.fetchRestaurantsListByName());
+			listAdapter.setLastKnownLocation(lastKnownLocation);
+			listAdapter.notifyDataSetChanged();
+			setListAdapter(listAdapter);
+		}
+	
+		if(v.getId() == sortByTimes.getId()){
+			listAdapter = new MostVisitedAdapter(this, R.layout.mostvisitedrow,  R.id.mVisited_name, this.fetchRestaurantsList());
+			listAdapter.setLastKnownLocation(lastKnownLocation);
+			listAdapter.notifyDataSetChanged();
+			setListAdapter(listAdapter);
+		}
 	}
 }

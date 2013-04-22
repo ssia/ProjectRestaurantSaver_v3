@@ -12,6 +12,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.example.ProjectRestaurantSaver.FavoriteRestaurantAdapter.ButtonClickListener;
+
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -33,7 +36,7 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 	private Button dialButton;
 	private DatabaseOpenHelper rd;
 	private Button directionsButton;
-	private Button deleteButton;
+	private Button deleteButton, websiteButton;
 	private double[] lastKnownLocation;
 
 	@SuppressWarnings("unused")
@@ -59,6 +62,7 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 		}
 		dialButton = (Button) v.findViewById(R.id.mVisitedContactButton);
 		directionsButton = (Button) v.findViewById(R.id.mVisitedDirectionsButton);
+		websiteButton = (Button) v.findViewById(R.id.mVisited_website);		
 		deleteButton = (Button) v.findViewById(R.id.mVisitedDeleteButton);
 		MostVisitedResturantObject ref = dataObjects.get(position);
 		if (ref != null) {
@@ -79,16 +83,40 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 				}
 				//System.out.println("mVisitedAddress = "+ mVisitedAddress);
 				ta.setText(mVisitedAddress);
-				System.out.println("ref = "+ref);
+				//System.out.println("ref = "+ref);
 			    //Set number of times in the row
 				int tvs = ref.getNoOfTimes();
-				String tvss = Integer.toString(tvs) + " visits";
-				tv.setText(tvss);
+				if(tvs == 1)
+					tv.setText(Integer.toString(tvs) + " visit");
+				else
+					tv.setText(Integer.toString(tvs) + " visits");
 			}
 			/*
 			 * Method to be implemented if the Contact button is clicked by the user. The method queries the database to
 			 * get the contact number of the restaurant and put it in the dialer for the user to call the restaurant.
 			 */
+			websiteButton.setOnClickListener(new ButtonClickListener(ref){
+				@Override
+				public void onClick(View v) {
+					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
+					Cursor c = rd.get_website_inDatabase(item.getId());//Changed the query to find by res_id
+					int contactColumn = c.getColumnIndex("Rwebsite");	
+					String website;
+					if (c != null) {
+						c.moveToFirst();
+						website = c.getString(contactColumn);
+					}
+					else website = "";
+					
+					Context context = getContext();
+					if(website != ""){
+						Uri uri = Uri.parse(website);
+						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+						context.startActivity(intent);
+					}
+				}
+				
+			});
 			dialButton.setOnClickListener(new ButtonClickListener(ref){
 				@SuppressWarnings("unused")
 				@Override

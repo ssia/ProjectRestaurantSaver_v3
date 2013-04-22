@@ -35,10 +35,23 @@
         android:scaleY=".70"
         android:layout_gravity="left"
         android:layout_alignParentLeft="true"
+        android:layout_marginLeft="-35dp"
         android:layout_below="@+id/favVisited_address"
         android:stepSize="1.0"
-        style="?android:attr/ratingBarStyleIndicator">
+        >
+        <!-- style="?android:attr/ratingBarStyleIndicator" -->
     </RatingBar>
+    <Button
+    android:id="@+id/favWebsiteButton"
+    android:background="@layout/rounded_corner"
+    android:layout_height="20dp"
+    android:layout_margin="5dp"
+    android:textSize="16sp"
+    android:typeface="sans"
+    android:layout_width="20dp"
+    android:textColor="#363535"
+    android:layout_alignParentRight="true">
+   	</Button>
     <Button
     android:id="@+id/favContactButton"
     android:text="Call"
@@ -73,7 +86,6 @@
     android:background="@layout/rounded_corner"
     android:layout_height="35dp"
     android:layout_margin="5dp"
-    android:paddingBottom="5dp"
     android:typeface="sans"
     android:textSize="16sp"
     android:layout_width="100dp"

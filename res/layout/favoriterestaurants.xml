@@ -3,24 +3,63 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-	<Button
-	    android:id="@+id/favPublishButton"	    
-	    android:background="@drawable/facebook_green_button"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_centerHorizontal="TRUE" 
-    	android:text="        Share"
-    	android:textColor="#013b08"
-        android:textSize="12sp"
-        android:textStyle="bold"
-    	android:layout_marginTop="10dip"
-        android:layout_marginBottom="10dip"
-        android:drawablePadding="3dip">
-	</Button>
+    <LinearLayout
+        android:id="@+id/linearLayoutfav"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:weightSum="3">
+		<Button
+		    android:id="@+id/favPublishButton"	    
+		    android:background="@drawable/green_button_plain"
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:layout_centerHorizontal="TRUE" 
+	    	android:text="Share"
+	    	android:textColor="#013b08"
+	        android:textSize="12sp"
+	        android:layout_weight="1"
+	        android:textStyle="bold"
+	    	android:layout_marginTop="10dip"
+	        android:layout_marginBottom="10dip"
+	        android:drawablePadding="3dip">
+		</Button>
+		<Button
+		    android:id="@+id/fVisitedSortByName"
+		    android:background="@drawable/green_button_plain"
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:text="Sort By Name"
+	    	android:textColor="#013b08"
+	        android:textSize="12sp"
+	        android:layout_weight="1"
+	        android:textStyle="bold"
+	    	android:layout_centerHorizontal="TRUE" 
+	    	android:layout_marginTop="10dip"
+	        android:layout_marginBottom="10dip"
+	        android:drawablePadding="3dip">
+		</Button>
+		
+		<Button
+		    android:id="@+id/fVisitedSortByRating"
+		    android:background="@drawable/green_button_plain"
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:text="Sort By Rating"
+	    	android:textColor="#013b08"
+	        android:textSize="12sp"
+	        android:textStyle="bold"
+	        android:layout_weight="1"
+	    	android:layout_centerHorizontal="TRUE" 
+	    	android:layout_marginTop="10dip"
+	        android:layout_marginBottom="10dip"
+	        android:drawablePadding="3dip">
+		</Button>
+	</LinearLayout>	
 
     <ListView
         android:id="@android:id/list"
-        android:layout_below="@+id/favPublishButton"
+        android:layout_below="@+id/linearLayoutfav"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
     </ListView>

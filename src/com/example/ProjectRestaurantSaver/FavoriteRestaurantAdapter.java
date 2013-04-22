@@ -34,7 +34,7 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 	private List<FavoriteRestaurantObject> dataObjects;
 	private Button dialButton;
 	private DatabaseOpenHelper rd;
-	private Button directionsButton;
+	private Button directionsButton, websiteButton;
 	private RatingBar rating;
 	private Button deleteButton;
 	private double[] lastKnownLocation;
@@ -56,8 +56,10 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 		dialButton = (Button) v.findViewById(R.id.favContactButton);
 		directionsButton = (Button) v.findViewById(R.id.favDirectionsButton);
 		deleteButton = (Button) v.findViewById(R.id.favDelete);
+		websiteButton = (Button) v.findViewById(R.id.favWebsiteButton);
 		rating= (RatingBar) v.findViewById(R.id.ratingbar);// create RatingBar object
 		FavoriteRestaurantObject ref = dataObjects.get(position);
+		rating.setStepSize((float)0.5);
 		rating.setRating((float) (ref.getRating()));
 
 		if (ref != null) {
@@ -81,7 +83,30 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 			if (tt != null) {
 				tt.setText(ref.getName());  
 			}
-			
+			websiteButton.setOnClickListener(new ButtonClickListener(ref){
+
+				@Override
+				public void onClick(View v) {
+					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
+					Cursor c = rd.get_website_inDatabase(item.getId());//Changed the query to find by res_id
+					int contactColumn = c.getColumnIndex("Rwebsite");	
+					String favwebsite;
+					if (c != null) {
+						c.moveToFirst();
+						favwebsite = c.getString(contactColumn);
+					}
+					else favwebsite = "";
+					Log.v("FavoriteRestaurantAdapter", favwebsite);
+					
+					Context context = getContext();
+					if(favwebsite != ""){
+						Uri uri = Uri.parse(favwebsite);
+						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+						context.startActivity(intent);
+					}
+				}
+				
+			});
 			dialButton.setOnClickListener(new ButtonClickListener(ref){
 				@Override
 				public void onClick(View v){
@@ -166,11 +191,12 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 				@Override
 				public void onRatingChanged(RatingBar rBar, float fRating, boolean fromUser) {
 					if(fromUser){
-						int rating = (int) fRating;
+						//int rating = (int) fRating;
+						float rating = fRating;
 						Log.v("Rating selected= ", String.valueOf(rating));
 						rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 						item.setRating(rating);
-						//Log.v("Adding In Database", item.getName()+ " "+item.getId()+" "+String.valueOf(rating));
+						Log.v("Adding In Database", item.getName()+ " "+item.getId()+" "+String.valueOf(rating));
 						rd.updateRatingInDatabase(item.getId(), rating);//changed from item.getName() to item.getId() due to adding Res_Id as Primary_Key in Database	    				
 					}
 				}

@@ -113,7 +113,7 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 				//System.out.println("#####child.getParent() = "+child.getParent());
 				child = child.getParent();
 			}
-			System.out.println("#####Parent = "+ getParent());
+			//System.out.println("#####Parent = "+ getParent());
 			TabGroup1Activity parent = (TabGroup1Activity)getParent();
 			
 	        //parent.startChildActivity("Search Restaurants", new Intent(parent, SearchActivity.class));

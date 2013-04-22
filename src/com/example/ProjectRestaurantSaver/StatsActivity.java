@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.ResourceCursorAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -14,7 +15,7 @@ import android.widget.TextView;
 public class StatsActivity extends ListActivity{
 	
 	private DatabaseOpenHelper rd;
-
+	private RatingBar rBar;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -39,15 +40,15 @@ public class StatsActivity extends ListActivity{
 			      noOfTimesColumn = 1;
 			      ratingColumn =2;
 			      String name = c.getString(nameColumn);
-			      Log.v("NewStats Data name= ", name);
+			      //Log.v("NewStats Data name= ", name);
 			      String noOfTimes = c.getString(noOfTimesColumn);
 			      if(noOfTimes != null){
 			    	  	Log.v("NewStats Data noOfTimes = ", noOfTimes);
 			      }
 			      String rating = c.getString(ratingColumn);
 			      if(rating != null){
-			    	  Log.v("Stats Data rating= ", rating);
-			    	  Log.v("Stats Data = ", name+ noOfTimes + rating);
+			    	  //Log.v("Stats Data rating= ", rating);
+			    	  //Log.v("Stats Data = ", name+ noOfTimes + rating);
 			      }
 			   }while(c.moveToNext());
 			}
@@ -69,25 +70,28 @@ public class StatsActivity extends ListActivity{
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
 
-        	Log.v("StatsActivity", "InBindView......");
         	int nameColumn = cursor.getColumnIndex("RName");
 			int noOfTimesColumn = cursor.getColumnIndex("NoOfTimes");
 			int ratingColumn = cursor.getColumnIndex("Rrating");
-			
+			rBar= (RatingBar) view.findViewById(R.id.statRatingBar);
+			rBar.setFocusable(false);
+			rBar.setStepSize((float)0.5);
 		    String name = cursor.getString(nameColumn);
 		    String noOfTimes = cursor.getString(noOfTimesColumn);
 		    String rating = cursor.getString(ratingColumn);
 
-		    Log.v("StatsActivity", "name noOfTmes rating = "+name+ " "+noOfTimes+ " "+rating);
+		    //Log.v("StatsActivity", "name noOfTmes rating = "+name+ " "+noOfTimes+ " "+rating);
         	TextView restaurantName = (TextView) view.findViewById(R.id.statRestaurantName);
         	restaurantName.setText(name);
         	
-        	TextView restaurantRatingAve = (TextView) view.findViewById(R.id.statRestaurantFav);
-        	restaurantRatingAve.setText(noOfTimes);
-        	
-        	TextView restaurantRatingTimes = (TextView) view.findViewById(R.id.statRestaurantTimes);
-        	restaurantRatingTimes.setText(rating);
-        	        	
+        	TextView restaurantRatingAve = (TextView) view.findViewById(R.id.statRestaurantTimes);
+        	if(noOfTimes != null && (Integer.parseInt(noOfTimes)) == 1){
+        			restaurantRatingAve.setText(noOfTimes + " Visit");
+        	}
+        	else
+        		restaurantRatingAve.setText(noOfTimes + " Visits");
+        	Log.v("RATING", ""+(Float.valueOf(rating)));
+        	rBar.setRating((Float.valueOf(rating)));	        	
 
         }
     }

@@ -152,7 +152,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 			addButton.setOnClickListener(new ButtonClickListener(ref) {
 				@Override
 				public void onClick(View v) {
-					Toast.makeText(getContext(), item.getName()+ "  "+ item.getId()+ " added to Most Visited Restaurant List", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getContext(), item.getName()+ "  " + " added to Most Visited Restaurant List", Toast.LENGTH_SHORT).show();
 					String nameOfRes = item.getName();
 					String resId = item.getId();
 					RestaurantDetails details = fetchRestaurantDetails(item);
