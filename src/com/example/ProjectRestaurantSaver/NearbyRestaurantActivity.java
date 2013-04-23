@@ -21,11 +21,13 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class NearbyRestaurantActivity extends ListActivity implements OnClickListener{
-	private Button refreshButton, searchRestaurants, goToSearch;
+	private Button refreshButton, searchRestaurants; 
+	ImageButton goToSearch;
 	private double[] lastKnownLocation;
 	private EditText locationEditText;
 	
@@ -39,7 +41,7 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 				
 		searchRestaurants = (Button)findViewById(R.id.searchButton);
 		searchRestaurants.setOnClickListener(this);
-		goToSearch = (Button)findViewById(R.id.goLocationButton);
+		goToSearch = (ImageButton)findViewById(R.id.goLocationButton);
 		goToSearch.setOnClickListener(this);
 		locationEditText = (EditText)findViewById(R.id.addressTextBox);
 		locationEditText.setVisibility(View.GONE);

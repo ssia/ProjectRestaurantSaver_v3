@@ -66,8 +66,8 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 			v = vi.inflate(R.layout.restaurantrow, null);//create instance of the template for the particular row represented by position
 		}
 		ImageButton addButton = (ImageButton) v.findViewById(R.id.add_button);
-		Button dialButton = (Button) v.findViewById(R.id.contactButton);
-		Button directionsButton = (Button) v.findViewById(R.id.directionsButton);
+		ImageButton dialButton = (ImageButton) v.findViewById(R.id.contactButton);
+		ImageButton directionsButton = (ImageButton) v.findViewById(R.id.directionsButton);
 		TextView distanceLabel = (TextView) v.findViewById(R.id.distance_label);
 		TextView addressLabel = (TextView) v.findViewById(R.id.address_label);
 

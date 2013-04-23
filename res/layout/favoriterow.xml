@@ -22,10 +22,10 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:textSize="12sp"
+    android:textColor="#363535"
     android:typeface="sans"
     android:layout_marginLeft="6dp"
-    android:layout_below="@+id/favName"
-    android:textColor="#363535">
+    android:layout_below="@+id/favName">
     </TextView>
 	<RatingBar android:id="@+id/ratingbar"
         android:layout_width="wrap_content"
@@ -38,59 +38,49 @@
         android:layout_marginLeft="-35dp"
         android:layout_below="@+id/favVisited_address"
         android:stepSize="1.0"
+        android:isIndicator="false"
         >
         <!-- style="?android:attr/ratingBarStyleIndicator" -->
     </RatingBar>
-    <Button
+    <ImageButton
     android:id="@+id/favWebsiteButton"
-    android:background="@layout/rounded_corner"
-    android:layout_height="20dp"
+    android:background="@null"
     android:layout_margin="5dp"
-    android:textSize="16sp"
-    android:typeface="sans"
-    android:layout_width="20dp"
-    android:textColor="#363535"
+    android:src="@drawable/internet_big"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
     android:layout_alignParentRight="true">
-   	</Button>
-    <Button
-    android:id="@+id/favContactButton"
-    android:text="Call"
-    android:background="@layout/rounded_corner"
-    android:layout_height="35dp"
-    android:layout_margin="5dp"
-    android:textSize="16sp"
-    android:typeface="sans"
-    android:layout_width="100dp"
-    android:textColor="#363535"
-    android:layout_below="@+id/ratingbar">
-   	</Button>
-   	
-    <Button
-    android:id="@+id/favDirectionsButton"
-    android:text="Map"
-    android:background="@layout/rounded_corner"
-    android:layout_height="35dp"
-    android:layout_margin="5dp"
-    android:layout_width="100dp"
-    android:typeface="sans"
-    android:maxHeight="10dp"
-    android:textSize="16sp"
-    android:textColor="#363535"
-    android:layout_below="@+id/ratingbar"
-    android:layout_toRightOf="@+id/favContactButton">
-    </Button>  	
- 	<Button
+   	</ImageButton>
+   	<ImageButton
     android:id="@+id/favDelete"
-    android:text="Delete"
-    android:textColor="#363535"
-    android:background="@layout/rounded_corner"
-    android:layout_height="35dp"
-    android:layout_margin="5dp"
-    android:typeface="sans"
-    android:textSize="16sp"
-    android:layout_width="100dp"
-    android:maxHeight="10dp"
+    android:src="@drawable/delete_big"
+    android:background="@null"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:layout_marginTop="-5dp"
     android:layout_below="@+id/ratingbar"
-    android:layout_toRightOf="@+id/favDirectionsButton">
-    </Button>  	
+    android:layout_alignParentLeft="true">
+    </ImageButton>  	
+    <ImageButton
+    android:id="@+id/favContactButton"
+    android:layout_height="wrap_content"
+    android:src="@drawable/call_big"
+    android:paddingRight="5dp"
+    android:background="@null"
+    android:layout_width="wrap_content"
+    android:layout_below="@+id/ratingbar"
+    android:layout_alignParentRight="true">
+   	</ImageButton>
+   	
+    <ImageButton
+    android:id="@+id/favDirectionsButton"
+    android:background="@null"
+    android:src="@drawable/map_big"
+    android:layout_height="wrap_content"
+    android:paddingRight="30dp"
+    android:layout_width="wrap_content"
+    android:layout_below="@+id/ratingbar"
+    android:layout_toLeftOf="@+id/favContactButton">
+    </ImageButton>  	
+
 </RelativeLayout>

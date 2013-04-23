@@ -136,7 +136,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	public Cursor getStats() {
 		
 		SQLiteDatabase db = getReadableDatabase();
-		String q = "SELECT ROWID as _id, RName, NoOfTimes, Rrating FROM (SELECT RName, SUM(NoOfTimes) as NoOfTimes, SUM(CASE WHEN Rrating > 0 THEN Rrating ELSE 0 END)*1.0/COUNT(CASE WHEN Rrating > 0 THEN Rrating ELSE 0 END)  as Rrating FROM restaurants GROUP BY LOWER(RName));";
+		String q = "SELECT ROWID as _id, RName, NoOfTimes, Rrating FROM (SELECT RName, SUM(NoOfTimes) as NoOfTimes, SUM(CASE WHEN Rrating > 0 THEN Rrating ELSE 0 END)*1.0/COUNT(CASE WHEN Rrating > 0 THEN Rrating ELSE 0 END)  as Rrating FROM restaurants WHERE RFavorite != 0 OR NoOfTimes !=0 GROUP BY LOWER(RName));";
 		Cursor mCursor = db.rawQuery(q, null);
 		return mCursor;
 		

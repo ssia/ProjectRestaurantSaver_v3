@@ -13,7 +13,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.example.ProjectRestaurantSaver.application.RestaurantApplication;
+
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.location.Address;
@@ -25,6 +28,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
 import android.widget.RatingBar;
@@ -32,11 +36,11 @@ import android.widget.Toast;
 
 public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantObject>{
 	private List<FavoriteRestaurantObject> dataObjects;
-	private Button dialButton;
+	private ImageButton dialButton;
 	private DatabaseOpenHelper rd;
-	private Button directionsButton, websiteButton;
+	private ImageButton directionsButton, websiteButton;
 	private RatingBar rating;
-	private Button deleteButton;
+	private ImageButton deleteButton;
 	private double[] lastKnownLocation;
 
 	public FavoriteRestaurantAdapter(Context context, int resource,
@@ -53,10 +57,10 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 			v = vi.inflate(R.layout.favoriterow, null);//create instance of the template for the particular row represented by position
 		}
 
-		dialButton = (Button) v.findViewById(R.id.favContactButton);
-		directionsButton = (Button) v.findViewById(R.id.favDirectionsButton);
-		deleteButton = (Button) v.findViewById(R.id.favDelete);
-		websiteButton = (Button) v.findViewById(R.id.favWebsiteButton);
+		dialButton = (ImageButton) v.findViewById(R.id.favContactButton);
+		directionsButton = (ImageButton) v.findViewById(R.id.favDirectionsButton);
+		deleteButton = (ImageButton) v.findViewById(R.id.favDelete);
+		websiteButton = (ImageButton) v.findViewById(R.id.favWebsiteButton);
 		rating= (RatingBar) v.findViewById(R.id.ratingbar);// create RatingBar object
 		FavoriteRestaurantObject ref = dataObjects.get(position);
 		rating.setStepSize((float)0.5);
@@ -165,24 +169,41 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 			deleteButton.setOnClickListener(new ButtonClickListener(ref){
 				@Override
 				public void onClick(View arg0) {
-					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-					RestaurantApplication restaurantApplication = (RestaurantApplication) getContext().getApplicationContext();
-					Cursor all = rd.check_restaurant_favorite_inDatabase(item.getId());//Changed the query to find by res_id
+										
+					//Put up the Yes/No message box before deleting the restaurant from database
+					AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+					builder
+					.setTitle("Delete Restaurant")
+					.setMessage("Are you sure?")
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {			      	
+							//Yes button clicked, do something
+							
+							rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
+							RestaurantApplication restaurantApplication = (RestaurantApplication) getContext().getApplicationContext();
+							Cursor all = rd.check_restaurant_favorite_inDatabase(item.getId());//Changed the query to find by res_id
+							
+							int timesColumn = all.getColumnIndex("noOfTimes");	
+							//Check if the restaurant is present in the MostVistited list.If yes, then only change the Favorites entry, else delete the Restaurant entry from the database.
+							if(timesColumn == 0){
+								boolean c = rd.deleteRowInList(item.getId());//Changed the query to find by res_id
+							}
+							else{
+								rd.removeRFavoriteInDatabase(item.getId());//Changed the query to find by res_id
+							}
+							FavoriteRestaurantAdapter.this.remove(item);//inner class accessing the parent to remove just the particular row of the list
+							
+							// After deleting the restaurant from the favorites list, we update the change for the STAR in the NearbyRestaurantActivity List
+							if(restaurantApplication.getRestaurantAdapter() != null){
+								restaurantApplication.getRestaurantAdapter().notifyDataSetChanged();
+							}
+							Toast.makeText(getContext(), ""+item.getName()+" deleted from Favorites", Toast.LENGTH_SHORT).show();
+						}
+					})
+					.setNegativeButton("No", null)//Do nothing on no
+					.show();
 
-					int timesColumn = all.getColumnIndex("noOfTimes");	
-					//Check if the restaurant is present in the MostVistited list.If yes, then only change the Favorites entry, else delete the Restaurant entry from the database.
-					if(timesColumn == 0){
-						boolean c = rd.deleteRowInList(item.getId());//Changed the query to find by res_id
-					}
-					else{
-						rd.removeRFavoriteInDatabase(item.getId());//Changed the query to find by res_id
-					}
-					FavoriteRestaurantAdapter.this.remove(item);//inner class accessing the parent to remove just the particular row of the list
-
-					// After deleting the restaurant from the favorites list, we update the change in the NearbyRestaurantActivity List
-					if(restaurantApplication.getRestaurantAdapter() != null){
-						restaurantApplication.getRestaurantAdapter().notifyDataSetChanged();
-					}
 				}
 			});
 			

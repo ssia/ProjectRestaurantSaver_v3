@@ -15,7 +15,9 @@ import org.json.JSONObject;
 
 import com.example.ProjectRestaurantSaver.FavoriteRestaurantAdapter.ButtonClickListener;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.location.Address;
@@ -28,15 +30,16 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>{
 	private List<MostVisitedResturantObject> dataObjects;
-	private Button dialButton;
+	private ImageButton dialButton;
 	private DatabaseOpenHelper rd;
-	private Button directionsButton;
-	private Button deleteButton, websiteButton;
+	private ImageButton directionsButton;
+	private ImageButton deleteButton, websiteButton;
 	private double[] lastKnownLocation;
 
 	@SuppressWarnings("unused")
@@ -60,10 +63,10 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 			LayoutInflater vi = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			v = vi.inflate(R.layout.mostvisitedrow, null);//create instance of the template for the particular row represented by position
 		}
-		dialButton = (Button) v.findViewById(R.id.mVisitedContactButton);
-		directionsButton = (Button) v.findViewById(R.id.mVisitedDirectionsButton);
-		websiteButton = (Button) v.findViewById(R.id.mVisited_website);		
-		deleteButton = (Button) v.findViewById(R.id.mVisitedDeleteButton);
+		dialButton = (ImageButton) v.findViewById(R.id.mVisitedContactButton);
+		directionsButton = (ImageButton) v.findViewById(R.id.mVisitedDirectionsButton);
+		websiteButton = (ImageButton) v.findViewById(R.id.mVisited_website);		
+		deleteButton = (ImageButton) v.findViewById(R.id.mVisitedDeleteButton);
 		MostVisitedResturantObject ref = dataObjects.get(position);
 		if (ref != null) {
 			TextView tt = (TextView) v.findViewById(R.id.mVisited_name);
@@ -182,19 +185,32 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 			deleteButton.setOnClickListener(new ButtonClickListener(ref){
 				@Override
 				public void onClick(View arg0) {
-					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-
-					Cursor all = rd.check_restaurant_favorite_inDatabase(item.getId());
-					int favColumn = all.getColumnIndex("RFavorite");	
-					/*check if the restaurant is marked as Favorties. If yes, then only remove entry from NoOfTimes Column in the database
-					If the restaurant is not marked as Favorites, then remove the entry for the restaurant from the databse*/
-					if(favColumn == 0){
-						boolean c = rd.deleteRowInList(item.getId());//Changed the query to find by res_id
-					}
-					else{
-						rd.removeMVisitedInDatabase(item.getId());//Changed the query to find by res_id
-					}
-					MostVisitedAdapter.this.remove(item);//inner class accessing the parent to remove just the particular row of the list
+					//Put up the Yes/No message box before deleting the restaurant from database
+					AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+					builder
+					.setTitle("Delete Restaurant")
+					.setMessage("Are you sure?")
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {			      	
+							//Yes button clicked, do something										
+							rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
+							Cursor all = rd.check_restaurant_favorite_inDatabase(item.getId());
+							int favColumn = all.getColumnIndex("RFavorite");	
+							/*check if the restaurant is marked as Favorties. If yes, then only remove entry from NoOfTimes Column in the database
+							If the restaurant is not marked as Favorites, then remove the entry for the restaurant from the database*/
+							if(favColumn == 0){
+								boolean c = rd.deleteRowInList(item.getId());
+							}
+							else{
+								rd.removeMVisitedInDatabase(item.getId());
+							}
+							MostVisitedAdapter.this.remove(item);//inner class accessing the parent to remove just the particular row of the list
+							Toast.makeText(getContext(), ""+item.getName()+" deleted from Visits", Toast.LENGTH_SHORT).show();
+						}
+					})
+					.setNegativeButton("No", null)//Do nothing on no
+					.show();
 				}
 			});
 		}

@@ -20,8 +20,6 @@
 	        android:textStyle="bold"
 	        android:layout_weight="1"
 	    	android:layout_centerHorizontal="TRUE" 
-	    	android:layout_marginTop="10dip"
-	        android:layout_marginBottom="10dip"
 	        android:drawablePadding="3dip">
 		</Button>
 		<Button
@@ -35,8 +33,6 @@
 	        android:layout_weight="1"
 	        android:textStyle="bold"
 	    	android:layout_centerHorizontal="TRUE" 
-	    	android:layout_marginTop="10dip"
-	        android:layout_marginBottom="10dip"
 	        android:drawablePadding="3dip">
 		</Button>
 		
@@ -51,8 +47,6 @@
 	        android:textStyle="bold"
 	        android:layout_weight="1"
 	    	android:layout_centerHorizontal="TRUE" 
-	    	android:layout_marginTop="10dip"
-	        android:layout_marginBottom="10dip"
 	        android:drawablePadding="3dip">
 		</Button>
 	</LinearLayout>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style 
+        name="Qype.RatingBar"
+		parent="@android:style/Widget.RatingBar">
+		<item name="android:isIndicator">true</item>
+		
+	</style>
+    
+</resources>
