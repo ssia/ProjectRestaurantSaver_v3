@@ -46,6 +46,7 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 		locationEditText = (EditText)findViewById(R.id.addressTextBox);
 		locationEditText.setVisibility(View.GONE);
 		goToSearch.setVisibility(View.GONE);
+		Log.v("Restaurant Saver", "Nearby Restaurant Activity: On Create");
 		//checks network connectivity
 		boolean checkConnection = isNetworkAvailable();
 		if(!checkConnection){
@@ -63,9 +64,9 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 			//Set the adapter first and then update it when the RestaurantHttpAsyncTask makes a web service call.
 			setListAdapter(restaurantAdapter);
 			//Make a webservice call in a different thread passing Keyword for URL as a string array.
-			RestaurantHttpAsyncTask m_progressTask, m_progressTask1;
-			//String[] keywords = {"", "american", "asian", "italian"};
-			String[] keywords = {"indian"};
+			RestaurantHttpAsyncTask m_progressTask;
+			String[] keywords = {"", "american", "asian", "italian","mexican"};
+			//String[] keywords = {"indian"};
 			m_progressTask = new RestaurantHttpAsyncTask(NearbyRestaurantActivity.this, keywords);
 			m_progressTask.setRestaurantAdapter(restaurantAdapter);
 			m_progressTask.execute();
@@ -100,8 +101,8 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 				setListAdapter(restaurantAdapter);
 				//Make a webservice call in a different thread passing Keyword for URL as a string array.
 				RestaurantHttpAsyncTask m_progressTask, m_progressTask1;
-				//String[] keywords = {"", "american", "asian", "italian","mexican"};
-				String[] keywords = {"Chinese"};
+				String[] keywords = {"", "american", "asian", "italian","mexican", "chinese", "indian"};
+				//String[] keywords = {"Chinese"};
 				m_progressTask = new RestaurantHttpAsyncTask(NearbyRestaurantActivity.this, keywords);
 				m_progressTask.setRestaurantAdapter(restaurantAdapter);
 				m_progressTask.execute();

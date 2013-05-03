@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -52,23 +51,23 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 			lon = 0.0;
 		}
 		else{
-			//Log.v("Latitude", Double.toString(location.getLatitude()));
-			//Log.v("Longitude", Double.toString(location.getLongitude())); 		
+			Log.v("RestaurantHttpAsyncTask", "Latitude = "+Double.toString(location.getLatitude()));
+			Log.v("RestaurantHttpAsyncTask", "Longitude = "+Double.toString(location.getLongitude())); 		
 			lat = location.getLatitude();
 			lon = location.getLongitude();
 		}
 		try{
-			//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius=700&types=restaurant&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
-			//Log.v("URLdef", urldef);
+			String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius=700&types=restaurant&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
+			Log.v("URLdef", urldef);
 			//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.391351,-122.04566&radius=700&types=restaurant&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
 			for(String keyword: keywords) {
 				URLConnection tc = null;
 				BufferedReader in = null;
 				try{
-					//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.387413,-122.046046&radius=2700&types=restaurant&keyword="+keyword+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
-					String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.387413,-122.046046&radius=2700&types=restaurant&keyword=subway"+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
-	
-					Log.v("URL", urldef);
+					//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.387413,-122.046046&radius=700&types=restaurant&keyword="+keyword+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
+					//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.387413,-122.046046&radius=2700&types=restaurant&keyword=subway"+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
+					//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius=700&types=restaurant&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
+					Log.v("URLdef", urldef);
 					URL urlPlace = new URL(urldef);    		
 					tc = urlPlace.openConnection();
 					in = new BufferedReader(new InputStreamReader(tc.getInputStream()));

@@ -3,6 +3,7 @@ package com.example.ProjectRestaurantSaver;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.ProjectRestaurantSaver.application.RestaurantApplication;
 import com.example.ProjectRestaurantSaver.util.RestaurantHelper;
 
 import android.app.ListActivity;
@@ -35,10 +36,14 @@ public class MostVisitedActivity  extends ListActivity implements OnClickListene
 		sortByTimes = (Button)findViewById(R.id.mVisitedSortByTimes);
 		sortByTimes.setOnClickListener(this);
 		
+		RestaurantApplication application1 = (RestaurantApplication) this.getApplication();
 		listAdapter = new MostVisitedAdapter(this, R.layout.mostvisitedrow,  R.id.mVisited_name, this.fetchRestaurantsList());
 		listAdapter.setLastKnownLocation(lastKnownLocation);
 		listAdapter.notifyDataSetChanged();
-		setListAdapter(listAdapter);
+		this.setListAdapter(listAdapter);
+		application1.setmVisitedActivity(this);
+
+		setListAdapter1(listAdapter);
 
 	}
 	private List<MostVisitedResturantObject> fetchRestaurantsList() {
@@ -167,5 +172,12 @@ public class MostVisitedActivity  extends ListActivity implements OnClickListene
 			listAdapter.notifyDataSetChanged();
 			setListAdapter(listAdapter);
 		}
+	}
+	public MostVisitedAdapter getListAdapter() {
+		return listAdapter;
+	}
+	public void setListAdapter1(MostVisitedAdapter listAdapter1) {
+		this.listAdapter = listAdapter1;
+		Log.v("Most Visted Activity", ""+listAdapter1);
 	}
 }

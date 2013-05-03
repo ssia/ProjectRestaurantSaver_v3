@@ -30,12 +30,12 @@
         android:layout_height="wrap_content"
         android:numStars="5"
         android:stepSize="0.5"
-        android:scaleX=".70"
-        android:scaleY=".70"
+
         android:isIndicator="true"
         android:clickable="false"
         android:layout_gravity="left"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="-35dp"/>
-
+<!--         android:scaleX=".70"
+        android:scaleY=".70" -->
 </LinearLayout>

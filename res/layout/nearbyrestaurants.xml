@@ -8,7 +8,7 @@
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:orientation="horizontal"
-	android:weightSum="3">	    
+	android:weightSum="2">	    
 		<Button 
 	        android:id="@+id/reloadButton"
 	        android:layout_width="wrap_content"

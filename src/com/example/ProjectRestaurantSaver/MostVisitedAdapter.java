@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.ProjectRestaurantSaver.FavoriteRestaurantAdapter.ButtonClickListener;
+import com.example.ProjectRestaurantSaver.application.RestaurantApplication;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -31,6 +32,7 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,8 +41,9 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 	private ImageButton dialButton;
 	private DatabaseOpenHelper rd;
 	private ImageButton directionsButton;
-	private ImageButton deleteButton, websiteButton;
+	private ImageButton deleteButton, websiteButton, visitedPlusOne;
 	private double[] lastKnownLocation;
+	TextView tv;
 
 	@SuppressWarnings("unused")
 	private Geocoder geocoder = null;
@@ -67,10 +70,11 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 		directionsButton = (ImageButton) v.findViewById(R.id.mVisitedDirectionsButton);
 		websiteButton = (ImageButton) v.findViewById(R.id.mVisited_website);		
 		deleteButton = (ImageButton) v.findViewById(R.id.mVisitedDeleteButton);
+		visitedPlusOne = (ImageButton) v.findViewById(R.id.add_button_visited);
 		MostVisitedResturantObject ref = dataObjects.get(position);
 		if (ref != null) {
 			TextView tt = (TextView) v.findViewById(R.id.mVisited_name);
-			TextView tv = (TextView) v.findViewById(R.id.noOfTimes);
+			tv = (TextView) v.findViewById(R.id.noOfTimes);
 			TextView ta = (TextView) v.findViewById(R.id.mVisited_address);
 			if (tt != null) {
 				tt.setText(ref.getName());  
@@ -93,6 +97,8 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 					tv.setText(Integer.toString(tvs) + " visit");
 				else
 					tv.setText(Integer.toString(tvs) + " visits");
+				Log.v("MostVisitedAdapter", "get tv"+ ref.getName() +tv);
+				this.notifyDataSetChanged();
 			}
 			/*
 			 * Method to be implemented if the Contact button is clicked by the user. The method queries the database to
@@ -141,7 +147,52 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 					context.startActivity(intent);
 				}
 			});
+			
+			//Increment the number of visits to restaurant which is already in the visited list.
+			visitedPlusOne.setOnClickListener(new ButtonClickListener(ref) {
+				@Override
+				public void onClick(View v) {
+					Toast.makeText(getContext(), item.getName()+ " added to Visits", Toast.LENGTH_SHORT).show();
+					String nameOfRes = item.getName();
+					String resId = item.getId();
+					int tvs = item.getNoOfTimes() + 1;
+					
+					if(tvs == 1){
+						tv.setText(Integer.toString(tvs) + " visit");
+						Log.v("MostVisitedAdapter", "get tvd"+ tv);
+					}
+					else{
+						tv.setText(Integer.toString(tvs) + " visits");
+						Log.v("MostVisitedAdapter", "get tvd"+ tv);
+					}
+					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
+					Cursor c = rd.check_restaurant_visited_inDatabase(resId);
+					try{
+						if (c != null) {
+							c.moveToFirst();
+							if (c.isFirst()) {
+								int firstNameColumn = c.getColumnIndex("_id");
+								String firstName = c.getString(firstNameColumn);								
+								int timesNameColumn = c.getColumnIndex("NoOfTimes");
+								String timesName = c.getString(timesNameColumn);
+								c.moveToFirst();
+								int num = Integer.parseInt(timesName);
+								num = num + 1;
+								rd.updateTimesInDatabase(resId, num); //if the restaurant was already visited in the past increase the number of visits by 1
+								item.setNoOfTimes((item.getNoOfTimes() + 1));
+							}
+							
+						}
+						
+					} 
+					finally{
+						c.close();
+					}
+				}
+			}); 
+			
 
+			
 			/*
 			 * Method to be implemented if the Direction button is clicked by the user. The method queries the database to
 			 * get the direction to the restaurant in google maps.
@@ -232,33 +283,15 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 	 */
 	public static JSONObject getLocationInfo(String address) {
 
-		HttpGet httpGet = new HttpGet("http://maps.google."
-				+ "com/maps/api/geocode/json?address=" + address
-				+ "ka&sensor=false");
-		HttpClient client = new DefaultHttpClient();
-		HttpResponse response;
-		StringBuilder stringBuilder = new StringBuilder();
-
-		try {
-			response = client.execute(httpGet);
-			HttpEntity entity = response.getEntity();
-			InputStream stream = entity.getContent();
-			int b;
-			while ((b = stream.read()) != -1) {
-				stringBuilder.append((char) b);
-			}
-		} catch (ClientProtocolException e) {
-		} catch (IOException e) {
-		}
-
 		JSONObject jsonObject = new JSONObject();
+		RestaurantAsyncTaskGetLocationInfo getLocationInfoTask = new RestaurantAsyncTaskGetLocationInfo( address);
 		try {
-			jsonObject = new JSONObject(stringBuilder.toString());
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			jsonObject = getLocationInfoTask.execute().get();
+		} catch (Throwable th){
+			th.printStackTrace();
+			throw new RuntimeException("Query for getLocationInfo failed", th);
 
+		}
 		return jsonObject;
 	}
 

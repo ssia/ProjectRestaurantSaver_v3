@@ -48,41 +48,31 @@
 	    </TextView>
 	</LinearLayout>
 	<TextView
-    android:id="@+id/address_label"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:typeface="sans"
-    android:layout_below="@+id/linearLayoutRes"
-    android:layout_alignParentLeft="true"
-    android:layout_marginLeft="6dip"
-    android:textSize="12sp"
-    android:textColor="#363535">
+	    android:id="@+id/address_label"
+	    android:layout_width="wrap_content"
+	    android:layout_height="fill_parent"
+	    android:typeface="sans"
+	    android:layout_below="@+id/linearLayoutRes"
+	    android:layout_alignParentLeft="true"
+	    android:layout_marginLeft="6dip"
+	    android:textSize="12sp"
+	    android:textColor="#363535">
     </TextView> 
  <!--  android:layout_marginTop="36dip"
      android:layout_marginLeft="8dip"-->
    	<TextView
-    android:id="@+id/distance_label"
-    android:layout_width="40dp"
-    android:layout_height="20dp"
-    android:maxHeight="10dp"
-    android:typeface="sans"
-	android:layout_below="@+id/linearLayoutRes"
-    android:layout_alignParentRight="true"
-    android:textSize="12sp"
-    android:layout_marginRight="6dip"
-    android:textColor="#363535">
+	    android:id="@+id/distance_label"
+	    android:layout_width="40dp"
+	    android:layout_height="20dp"
+	    android:maxHeight="10dp"
+	    android:typeface="sans"
+		android:layout_below="@+id/linearLayoutRes"
+	    android:layout_alignParentRight="true"
+	    android:textSize="12sp"
+	    android:layout_marginRight="6dip"
+	    android:textColor="#363535">
     </TextView>
-   
-   	<!-- android:text="Map" 
-   	android:background="@layout/rounded_corner"
-   	android:layout_width="100dp"
-    android:maxHeight="10dp"
-    android:layout_height="35dp"
-    android:textColor="#363535"
-    android:textSize="16sp"
-    android:typeface="sans"
-    
-   	-->
+ 
    <ImageButton
     android:id="@+id/directionsButton"
     android:src="@drawable/map_big"

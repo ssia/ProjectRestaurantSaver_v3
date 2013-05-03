@@ -100,7 +100,7 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 						favwebsite = c.getString(contactColumn);
 					}
 					else favwebsite = "";
-					Log.v("FavoriteRestaurantAdapter", favwebsite);
+					//Log.v("FavoriteRestaurantAdapter", favwebsite);
 					
 					Context context = getContext();
 					if(favwebsite != ""){
@@ -215,9 +215,9 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 						//int rating = (int) fRating;
 						float rating = fRating;
 						Log.v("Rating selected= ", String.valueOf(rating));
+						Log.v("Adding In Database", item.getName()+ " "+item.getId()+" "+String.valueOf(rating));
 						rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 						item.setRating(rating);
-						Log.v("Adding In Database", item.getName()+ " "+item.getId()+" "+String.valueOf(rating));
 						rd.updateRatingInDatabase(item.getId(), rating);//changed from item.getName() to item.getId() due to adding Res_Id as Primary_Key in Database	    				
 					}
 				}
@@ -243,33 +243,15 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 
 	public static JSONObject getLocationInfo(String address) {
 
-		HttpGet httpGet = new HttpGet("http://maps.google."
-				+ "com/maps/api/geocode/json?address=" + address
-				+ "ka&sensor=false");
-		HttpClient client = new DefaultHttpClient();
-		HttpResponse response;
-		StringBuilder stringBuilder = new StringBuilder();
-
-		try {
-			response = client.execute(httpGet);
-			HttpEntity entity = response.getEntity();
-			InputStream stream = entity.getContent();
-			int b;
-			while ((b = stream.read()) != -1) {
-				stringBuilder.append((char) b);
-			}
-		} catch (ClientProtocolException e) {
-		} catch (IOException e) {
-		}
-
 		JSONObject jsonObject = new JSONObject();
+		RestaurantAsyncTaskGetLocationInfo getLocationInfoTask = new RestaurantAsyncTaskGetLocationInfo( address);
 		try {
-			jsonObject = new JSONObject(stringBuilder.toString());
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			jsonObject = getLocationInfoTask.execute().get();
+		} catch (Throwable th){
+			th.printStackTrace();
+			throw new RuntimeException("Query for getLocationInfo failed", th);
 
+		}
 		return jsonObject;
 	}
 
