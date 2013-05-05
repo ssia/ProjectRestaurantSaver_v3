@@ -33,14 +33,17 @@
         android:numStars="5"
         android:layout_gravity="left"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="-35dp"
         android:layout_below="@+id/favVisited_address"
         android:stepSize="1.0"
         android:isIndicator="false"
- 		android:scaleX=".70"
+        style="@style/foodRatingBar"
+        android:layout_marginLeft="-12dp"
+ 	    android:scaleX=".70"
         android:scaleY=".70"
         >
-        <!--         android:scaleX=".70"
+        <!--         
+                android:layout_marginLeft="-55dp"
+        android:scaleX=".70"
         android:scaleY=".70" -->
         <!-- style="?android:attr/ratingBarStyleIndicator" -->
     </RatingBar>

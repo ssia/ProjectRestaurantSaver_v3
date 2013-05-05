@@ -1,6 +1,7 @@
 package com.example.ProjectRestaurantSaver;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import com.example.ProjectRestaurantSaver.application.RestaurantApplication;
 import com.example.ProjectRestaurantSaver.util.RestaurantHelper;
@@ -52,12 +53,13 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 		if(!checkConnection){
 			Toast.makeText(getApplicationContext(), "Check your Network Connectivity", Toast.LENGTH_LONG).show();
 		}
+
 		if(checkConnection){
 			//sets current location parameters for the user
 			lastKnownLocation = RestaurantHelper.getLastKnownLocation(this);
 			System.out.println("network"+lastKnownLocation[0]+ lastKnownLocation[1]);
 			RestaurantApplication application = (RestaurantApplication) this.getApplication();
-			RestaurantAdapter restaurantAdapter = new RestaurantAdapter(this, R.layout.restaurantrow,  R.id.label, new ArrayList<RestaurantReference>());
+			RestaurantAdapter restaurantAdapter = new RestaurantAdapter(this, R.layout.restaurantrow,  R.id.label,new ArrayList<RestaurantReference>());
 			restaurantAdapter.setLastKnownLocation(lastKnownLocation);  
 			//set a global variable for the RestaurantAdapter in the RestaurantApplication class.
 			application.setRestaurantAdapter(restaurantAdapter);
@@ -67,9 +69,9 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 			RestaurantHttpAsyncTask m_progressTask;
 			String[] keywords = {"", "american", "asian", "italian","mexican"};
 			//String[] keywords = {"indian"};
-			m_progressTask = new RestaurantHttpAsyncTask(NearbyRestaurantActivity.this, keywords);
+			/*m_progressTask = new RestaurantHttpAsyncTask(NearbyRestaurantActivity.this, keywords);
 			m_progressTask.setRestaurantAdapter(restaurantAdapter);
-			m_progressTask.execute();
+			m_progressTask.execute();*/
 		}
 	}
 
@@ -136,6 +138,9 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 			//Make a webservice call in a different thread passing Keyword for URL as a string array.
 			RestaurantHttpAsyncTaskTextSearch m_progressTask, m_progressTask1;
 			String keywords = locationEditText.getText().toString();
+			if(keywords.equals("")){
+				keywords = "Pizza in Palo Alto";
+			}
 			keywords = keywords.replaceAll(" ", "%20");
 			keywords = keywords.replaceAll(",", "%20");
 			m_progressTask = new RestaurantHttpAsyncTaskTextSearch (NearbyRestaurantActivity.this, keywords);
@@ -157,9 +162,6 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 					Toast.makeText(getApplicationContext(), "Check your Network Connectivity", Toast.LENGTH_LONG).show();
 				}
 				if(checkConnection){
-					/*Intent intent = new Intent(this, FindByLocationActivity.class);
-	                startActivity(intent);  */
-	
 					goToSearch.setVisibility(View.VISIBLE);
 					locationEditText.setVisibility(View.VISIBLE);
 					

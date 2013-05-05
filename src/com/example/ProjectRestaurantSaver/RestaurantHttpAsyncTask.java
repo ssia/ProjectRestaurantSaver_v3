@@ -58,12 +58,12 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 		}
 		try{
 			String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius=700&types=restaurant&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
-			Log.v("URLdef", urldef);
+			//Log.v("URLdef", urldef);
 			//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.391351,-122.04566&radius=700&types=restaurant&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
 			for(String keyword: keywords) {
 				URLConnection tc = null;
 				BufferedReader in = null;
-				try{
+				try{	
 					//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.387413,-122.046046&radius=700&types=restaurant&keyword="+keyword+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
 					//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.387413,-122.046046&radius=2700&types=restaurant&keyword=subway"+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
 					//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius=700&types=restaurant&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
@@ -75,8 +75,8 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 					while ((line = in.readLine()) != null) {
 						finalLine += line;
 					}
-					//System.out.println("Nearby Restaurant JSON \n"+ finalLine);
-
+					Log.v("RestaurantAsyncTask","Nearby Restaurant JSON= \n"+ finalLine);
+					
 					JSONObject obj = new JSONObject(finalLine);
 					JSONArray ja = obj.getJSONArray("results");
 					//Parse the received JSON file           

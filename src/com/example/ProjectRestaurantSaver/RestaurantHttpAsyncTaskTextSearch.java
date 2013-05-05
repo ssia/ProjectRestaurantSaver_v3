@@ -51,7 +51,7 @@ public class RestaurantHttpAsyncTaskTextSearch extends AsyncTask<Void, Void, Arr
 				while ((line = in.readLine()) != null) {
 					finalLine += line;
 				}
-				System.out.println("Restaurant Search JSON \n"+ finalLine);
+				Log.v("RestaurantAsyncTask","Nearby Restaurant JSON= \n"+ finalLine);
 
 				JSONObject obj = new JSONObject(finalLine);
 				JSONArray ja = obj.getJSONArray("results");

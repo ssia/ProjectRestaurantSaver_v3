@@ -1,22 +1,13 @@
 package com.example.ProjectRestaurantSaver;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,17 +17,16 @@ import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.StrictMode;
-import android.os.StrictMode.ThreadPolicy;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,9 +35,19 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 	private List<RestaurantReference> dataObjects;
 	private DatabaseOpenHelper rd;
 	private double[] lastKnownLocation;	
-	RestaurantAsyncTaskFetchDetails detailsAsyncTask;
-	RestaurantDetails resDetails;
-	TextView distanceLabel;
+	private RestaurantAsyncTaskFetchDetails detailsAsyncTask;
+	private TextView distanceLabel;
+	private ImageButton addButton;
+	private ImageButton dialButton;
+	private ImageButton directionsButton;
+	private TextView addressLabel;
+	private ImageButton favButton;
+	private TextView tt;
+	private double lat = 0.0;
+	private double lon = 0.0;
+	
+	private String currentaddress;
+	
 	/*
 	 * The two main inputs to the adapter are the data source which is the list of items and the template to represent
 	 * a row in the list. 
@@ -56,7 +56,68 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 			int textViewResourceId, List<RestaurantReference> objects) {
 		super(context, resource, textViewResourceId, objects);	
 		dataObjects = objects;
+		calculateCurrentAddress(null /* we dont know the location yet */);
+		Log.v("RestaurantAdapter", "RestaurantAdapter constructor = "+ currentaddress);
 	}
+	
+	// We are not calling this at this point to conserve the battery life.
+	protected void setLocationChangeListener() {
+		
+		LocationManager lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+		
+		// Define a listener that responds to location updates
+		LocationListener locationListener = new LocationListener() {
+		    public void onLocationChanged(Location location) {
+		    	RestaurantAdapter.this.calculateCurrentAddress(location);
+		    	Log.v("RestaurantAdapter", "onLocationChanged: current address 1 = "+ currentaddress);
+		    }
+
+		    public void onProviderEnabled(String provider) {}
+
+		    public void onProviderDisabled(String provider) {}
+
+			@Override
+			public void onStatusChanged(String provider, int status,Bundle extras) {
+				// TODO Auto-generated method stub
+				
+			}
+		  };
+		  
+		  lm.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+	}
+	
+	protected void calculateCurrentAddress(Location location) {
+		lat = 0.0;
+		lon = 0.0;
+		LocationManager lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);    
+		
+		if(location == null) {
+			location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);  
+		}
+		
+		if(location == null){
+			lat = 0.0;
+			lon = 0.0;
+		}
+		else{
+			//Log.v("Latitude", Double.toString(location.getLatitude()));
+			//Log.v("Longitude", Double.toString(location.getLongitude())); 		
+			lat = location.getLatitude();
+			lon = location.getLongitude();
+			Log.v("RestaurantAdapter", "lat = "+lat);
+			Log.v("RestaurantAdapter", "lon"+lon); 
+			currentaddress = findAddressfromLatLng(lat, lon);
+			if(currentaddress == null) {
+				  currentaddress = "";
+			}
+			currentaddress = currentaddress.replaceAll("(\\r|\\n)", "");
+		}
+		
+	    Log.v("RestaurantAdapter", "onLocationChanged: current address 2 = "+ currentaddress);
+
+	}
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * @see android.widget.ArrayAdapter#getView(int, android.view.View, android.view.ViewGroup)
@@ -65,22 +126,32 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 	@SuppressWarnings("unused")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		
+		
 		View v = convertView;//Check to see if rows are already present for re-use or if new row needs to be created
 		if (v == null) {
 			LayoutInflater vi = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			v = vi.inflate(R.layout.restaurantrow, null);//create instance of the template for the particular row represented by position
+			addButton = (ImageButton) v.findViewById(R.id.add_button);
+			dialButton = (ImageButton) v.findViewById(R.id.contactButton);
+			directionsButton = (ImageButton) v.findViewById(R.id.directionsButton);
+			distanceLabel = (TextView) v.findViewById(R.id.distance_label);
+			addressLabel = (TextView) v.findViewById(R.id.address_label);
+			tt = (TextView) v.findViewById(R.id.label);
+			favButton = (ImageButton) v.findViewById(R.id.fav_button);
+			
 		}
-		resDetails = null;//initializing res_details;
-		ImageButton addButton = (ImageButton) v.findViewById(R.id.add_button);
-		ImageButton dialButton = (ImageButton) v.findViewById(R.id.contactButton);
-		ImageButton directionsButton = (ImageButton) v.findViewById(R.id.directionsButton);
-		distanceLabel = (TextView) v.findViewById(R.id.distance_label);
-		TextView addressLabel = (TextView) v.findViewById(R.id.address_label);
-
+		
+		
+	    
 		//check if the restaurant is already marked as favorite
 		RestaurantReference ref = dataObjects.get(position);
+		Log.v("RestaurantAdapter", "RestaurantReference ref = "+ref);
+		Log.v("RestaurantAdapter", "RestaurantReference ref.getName = "+ref.getName());
+		Log.v("RestaurantAdapter", "RestaurantReference ref.getAddress = "+ref.getAddress());
+
 		if (ref != null) {
-			TextView tt = (TextView) v.findViewById(R.id.label);
+			 
 			if (ref.getName() != null) {
 				tt.setText(ref.getName());                            
 			}
@@ -88,39 +159,27 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 				addressLabel.setText(ref.getAddress());
 			}
 
-			String destinationAddress = findAddressfromLatLng(ref.getLatitude(), ref.getLongitude());
+			//String destinationAddress = findAddressfromLatLng(ref.getLatitude(), ref.getLongitude());
+			String destinationAddress = ref.getAddress();
+			//String destinationAddress = "castro street mountain view";
 			destinationAddress = destinationAddress.replaceAll("(\\r|\\n)", "");
-			Log.v("destination address=", destinationAddress);
+			//Log.v("destination address=", destinationAddress);
 			
-			double lat = 0.0;
-			double lon = 0.0;
-			LocationManager lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);    
-			Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);  
-
-			if(location == null){
-				lat = 0.0;
-				lon = 0.0;
-			}
-			else{
-				Log.v("Latitude", Double.toString(location.getLatitude()));
-				Log.v("Longitude", Double.toString(location.getLongitude())); 		
-				lat = location.getLatitude();
-				lon = location.getLongitude();
-			}
-			//String currentaddress = "395 Ano Nuevo Ave Sunnyvale";
-			String currentaddress = findAddressfromLatLng(lat, lon);
-			currentaddress = currentaddress.replaceAll("(\\r|\\n)", "");
+			
 			//currentaddress = "401%20Castro%20St,%20Mountain%20View,%20CA%2094041,%20USA";
-			Log.v("destination address=", destinationAddress);
-			
-			String distanceURL = "http://maps.googleapis.com/maps/api/distancematrix/json?origins="+currentaddress+"&destinations="+destinationAddress+"&mode=driving&sensor=false&units=imperial";
-			distanceURL =  distanceURL.replaceAll(" ", "%20");
+			//Log.v("destination address=", destinationAddress);
+			String distanceURL = null;
+			if(currentaddress != null) {
+				distanceURL = "http://maps.googleapis.com/maps/api/distancematrix/json?origins="+currentaddress+"&destinations="+destinationAddress+"&mode=driving&sensor=false&units=imperial";
+				distanceURL =  distanceURL.replaceAll(" ", "%20");
+			}
 			//String distanceURL = "http://maps.googleapis.com/maps/api/distancematrix/json?origins=401%20Castro%20St,%20Mountain%20View,%20CA%2094041,%20USA&destinations=800%20California%20StMountain%20View,%20CA%2094041&mode=driving&sensor=false&units=imperial";
-			Log.v("distanceURL=", distanceURL);
+			//Log.v("distanceURL=", distanceURL);
 			RestaurantAsyncTaskGetDistance getDistanceTask;
 			getDistanceTask = new RestaurantAsyncTaskGetDistance(this, distanceURL, distanceLabel);
 			getDistanceTask.setRestaurantAdapter(this);
 			getDistanceTask.execute();
+			
 			
 			rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 			Cursor c = rd.check_restaurant_favorite_inDatabase(ref.getId());
@@ -136,7 +195,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 				c.close();
 			}
 			//If the restaurant is marked as favorite, then display a green star or else display a grey star
-			ImageButton favButton = (ImageButton) v.findViewById(R.id.fav_button);
+		
 			if(rFavValue == 0 ) {
 				favButton.setImageResource(R.drawable.star);
 				ref.setInFavorites(false);
@@ -152,7 +211,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 			addButton.setOnClickListener(new ButtonClickListener(ref) {
 				@Override
 				public void onClick(View v) {
-					Toast.makeText(getContext(), item.getName()+ "  " + " added to Visits", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getContext(), item.getName() + " added to Visits", Toast.LENGTH_SHORT).show();
 					String nameOfRes = item.getName();
 					String resId = item.getId();
 
@@ -211,7 +270,6 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 
 				@Override
 				public void onClick(View v) {
-					Toast.makeText(getContext(), item.getName() +" added to Favorites", Toast.LENGTH_SHORT).show();
 					System.out.println(item.getName() + " get fav = "+ item + " "+item.isInFavorites());
 					String nameOfRes = item.getName();
 					String resId = item.getId();
@@ -228,6 +286,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 						//Log.v("RestaurantAdapter, Restaurant Address and Phone No =", address+" "+contact);
 						btn.setImageResource((R.drawable.star_green));
 						item.setInFavorites(true);
+						Toast.makeText(getContext(), item.getName() +" added to Favorites", Toast.LENGTH_SHORT).show();
 
 						Cursor c = rd.check_restaurant_favorite_inDatabase(resId);
 
@@ -271,10 +330,10 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 					}
 				}	
 			});
-			/*
-			 * Method to be implemented if the Direction button is clicked by the user. The method queries the database to
-			 * get the direction to the restaurant in google maps.
-			 */
+			
+			 /* Method to be implemented if the Direction button is clicked by the user. The method queries the database to
+			  get the direction to the restaurant in google maps.*/
+			 
 			directionsButton.setOnClickListener(new ButtonClickListener(ref){
 				LocationObject location = new LocationObject();
 
@@ -346,6 +405,8 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Log.v("Restaurant Adapter", " Restaurant Address,PhNo,Lat, Lon, Website frm JSON ="+res_detail.getAddress() + "  "+res_detail.getPhoneNumber()+ res_detail.getLatitude() +" "+res_detail.getLongitude()+" "+res_detail.getWebsite());
+
 		return res_detail;
 	}
 	public static JSONObject getLocationInfo(String address) {
@@ -416,4 +477,6 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 		return add;
 
 	}
+	
+   
 }

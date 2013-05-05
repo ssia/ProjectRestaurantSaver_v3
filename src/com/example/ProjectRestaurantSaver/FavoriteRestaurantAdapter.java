@@ -42,7 +42,7 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 	private RatingBar rating;
 	private ImageButton deleteButton;
 	private double[] lastKnownLocation;
-
+	private String favwebsite;
 	public FavoriteRestaurantAdapter(Context context, int resource,
 			int textViewResourceId, List<FavoriteRestaurantObject> objects) {
 		super(context, resource, textViewResourceId, objects);
@@ -71,7 +71,7 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 			TextView ta = (TextView) v.findViewById(R.id.favVisited_address);
 			//Get address for the restaurant by querying the database
 			rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-			Log.v("ref.getName() + ID", ref.getName() + ref.getId());
+			//Log.v("ref.getName() + ID", ref.getName() + ref.getId());
 			Cursor c = rd.check_restaurant_address_inDatabase(ref.getId());
 			
 			
@@ -87,27 +87,27 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 			if (tt != null) {
 				tt.setText(ref.getName());  
 			}
+			
+			rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
+			Cursor c1 = rd.get_website_inDatabase(ref.getId());//Changed the query to find by res_id
+			int contactColumn1 = c.getColumnIndex("Rwebsite");	
+			favwebsite = "";
+			if (c != null && c.getCount() > 0) {
+				c.moveToFirst();
+				favwebsite = c.getString(contactColumn);
+			}
+			if(favwebsite.equals("")){
+				websiteButton.setVisibility(View.GONE);
+			}
 			websiteButton.setOnClickListener(new ButtonClickListener(ref){
 
+				@SuppressWarnings("unused")
 				@Override
 				public void onClick(View v) {
-					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-					Cursor c = rd.get_website_inDatabase(item.getId());//Changed the query to find by res_id
-					int contactColumn = c.getColumnIndex("Rwebsite");	
-					String favwebsite;
-					if (c != null) {
-						c.moveToFirst();
-						favwebsite = c.getString(contactColumn);
-					}
-					else favwebsite = "";
-					//Log.v("FavoriteRestaurantAdapter", favwebsite);
-					
 					Context context = getContext();
-					if(favwebsite != ""){
-						Uri uri = Uri.parse(favwebsite);
-						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-						context.startActivity(intent);
-					}
+					Uri uri = Uri.parse(favwebsite);
+					Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+					context.startActivity(intent);
 				}
 				
 			});

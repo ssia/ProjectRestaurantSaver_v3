@@ -120,6 +120,7 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 					Context context = getContext();
 					if(website != ""){
 						Uri uri = Uri.parse(website);
+						Log.v("Most Visited Adapter", "website url = "+ website);
 						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 						context.startActivity(intent);
 					}

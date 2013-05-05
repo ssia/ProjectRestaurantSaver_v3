@@ -54,7 +54,7 @@ public class RestaurantAsyncTaskFetchDetails extends AsyncTask<Void, Void, Resta
 				res_detail.setAddress(ja.getString("formatted_address"));
 				res_detail.setPhoneNumber(ja.getString("formatted_phone_number"));
 				res_detail.setWebsite(ja.getString("website"));
-				//Log.v("Restaurant Adapter, Restaurant Address,PhNo,Lat, Lon, Website frm JSON =", res_detail.getAddress() + "  "+res_detail.getPhoneNumber()+ res_detail.getLatitude() +" "+res_detail.getLongitude()+" "+res_detail.getWebsite());
+				Log.v("Restaurant Adapter, Restaurant Address,PhNo,Lat, Lon, Website frm JSON =", res_detail.getAddress() + "  "+res_detail.getPhoneNumber()+ res_detail.getLatitude() +" "+res_detail.getLongitude()+" "+res_detail.getWebsite());
 			}
 			 finally {
 				if(in != null) {
