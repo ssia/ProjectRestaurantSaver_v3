@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -116,7 +117,24 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 			throw new RuntimeException("Error while getting data from Google Places API",e);
 		}
 		//Log.v("NearbyRestaurantsSearch", "Got " + listItems.size() + " restaurants");
-		return listItems;
+		
+		//Remove any duplicating restaurant value
+		//Remove any duplicating restaurant value
+		HashMap<String, RestaurantReference> resMap = new HashMap <String, RestaurantReference>();
+		for(int i = 0; i < listItems.size(); i++){
+			resMap.put(listItems.get(i).getId(), listItems.get(i));
+			
+		}
+		ArrayList<RestaurantReference> valuesList = new ArrayList<RestaurantReference>();
+		valuesList.addAll(resMap.values());
+		/*Log.v("RestaurantHttpAsyncTaskTextSearch", "resMap = " + resMap.size());
+		Log.v("RestaurantHttpAsyncTaskTextSearch", "valuesList.size() = " + valuesList.size());
+
+		for(int i = 0; i < valuesList.size(); i++){
+			Log.v("RestaurantHttpAsyncTaskTextSearch", "valuesList = " + valuesList.get(i).getName() + " "+  valuesList.get(i).getId());
+		}*/
+		
+		return valuesList;
 	}
 
 
@@ -129,6 +147,8 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 			for(int i = 0; i< listItemsresult.size();i++){
 				//this.getRestaurantAdapter().add(list.get(i));
 				this.getRestaurantAdapter().add(listItemsresult.get(i));
+				//Log.v("RestaurantHttpAsyncTask", "listItemsresult = " + listItemsresult.get(i).getName() + " "+  listItemsresult.get(i).getId());
+
 			}
 			//Notify the Restaurant Adapter that the data has changed and the ListView needs to be refreshed.
 			this.getRestaurantAdapter().notifyDataSetChanged();

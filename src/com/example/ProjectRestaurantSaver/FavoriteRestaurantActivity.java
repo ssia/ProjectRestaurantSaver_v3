@@ -61,7 +61,7 @@ public class FavoriteRestaurantActivity extends ListActivity implements OnClickL
 				c = rd.get_restaurantNameRatingAsc();
 				ratingGlobalVar = 0;
 			}
-			
+
 			if (c != null) {
 				c.moveToFirst();
 				int i = 0;
@@ -93,8 +93,8 @@ public class FavoriteRestaurantActivity extends ListActivity implements OnClickL
 		favListItems = sortRestaurantsByName(favListItems);
 		return favListItems;
 	}
-	
-	
+
+
 	private ArrayList<FavoriteRestaurantObject> sortRestaurantsByName(
 			ArrayList<FavoriteRestaurantObject> favListItems2) {
 		try{
@@ -108,7 +108,7 @@ public class FavoriteRestaurantActivity extends ListActivity implements OnClickL
 				c = rd.sortFavRestaurantsByNameDesc();
 				nameGlobalVar = 0;
 			}
-	
+
 			if (c != null) {
 				c.moveToFirst();
 				int i = 0;
@@ -135,7 +135,7 @@ public class FavoriteRestaurantActivity extends ListActivity implements OnClickL
 
 	}
 
-	
+
 	@Override
 	public void onClick(View v) {
 		if(v.getId() == publishButton.getId()){
@@ -161,14 +161,14 @@ public class FavoriteRestaurantActivity extends ListActivity implements OnClickL
 			postOnFacebookWallIntent.putExtra("facebookMessage", postMessage);
 			startActivity(postOnFacebookWallIntent);		
 		}	
-		
+
 		if(v.getId() == sortByName.getId()){
 			listAdapter = new FavoriteRestaurantAdapter(this, R.layout.favoriterow,  R.id.favName, this.fetchRestaurantsListByName());
 			listAdapter.setLastKnownLocation(lastKnownLocation);
 			listAdapter.notifyDataSetChanged();
 			setListAdapter(listAdapter);
 		}
-	
+
 		if(v.getId() == sortByRating.getId()){
 			listAdapter = new FavoriteRestaurantAdapter(this, R.layout.favoriterow,  R.id.favName, this.fetchFavRestaurantsList());
 			listAdapter.setLastKnownLocation(lastKnownLocation);

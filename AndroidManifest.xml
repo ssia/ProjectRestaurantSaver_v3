@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ProjectRestaurantSaver"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionCode="3"
+    android:versionName="1.1" >
     
-    <uses-sdk android:minSdkVersion="14" />
+    <uses-sdk android:minSdkVersion="17" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.CALL_PHONE"/>
    	<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
    	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+   	<uses-permission android:name="android.permission.SET_DEBUG_APP"></uses-permission>
    	
     
     <application
-        android:icon="@drawable/restaurantsaver"
+        android:icon="@drawable/restaurant_saver_48_1"
         android:label="@string/app_name" 
         android:name=".application.RestaurantApplication"> <!--Class for globally sharing the RestaurantAdapter ArrayList-->
         <activity

@@ -37,7 +37,7 @@
         android:stepSize="1.0"
         android:isIndicator="false"
         style="@style/foodRatingBar"
-        android:layout_marginLeft="-12dp"
+        android:layout_marginLeft="-25dp"
  	    android:scaleX=".70"
         android:scaleY=".70"
         >

@@ -1,5 +1,7 @@
 package com.example.ProjectRestaurantSaver;
 
+import java.util.Comparator;
+
 //class to hold the data received from the Google Places API webservice
 public class RestaurantReference {
 	private String name;
@@ -9,6 +11,7 @@ public class RestaurantReference {
 	private double latitude;
 	private double longitude;
 	private String address;
+	//private String distanceInMiles;
 
 	RestaurantReference(){
 		setName("");
@@ -73,6 +76,15 @@ public class RestaurantReference {
 	public String getAddress() {
 		return address;
 	}
+
+	/*public String getDistanceInMiles() {
+		return distanceInMiles;
+	}
+
+	public void setDistanceInMiles(String distanceInMiles) {
+		this.distanceInMiles = distanceInMiles;
+	}*/
+
 
 
 

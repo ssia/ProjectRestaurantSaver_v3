@@ -267,7 +267,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	//Get a list of the top 10 favorite restaurants
 	public Cursor getTopTenFavoriteRestaurantNames() {
 		SQLiteDatabase db = getReadableDatabase();
-		String q = "select RName, Rrating from restaurants where RFavorite == 1 order by Rrating DESC limit 10;";
+		String q = "select RName from restaurants where RFavorite == 1 order by Rrating DESC limit 10;";
 		Cursor mCursor = db.rawQuery(q, null);
 		return mCursor;
 	}

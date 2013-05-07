@@ -44,7 +44,7 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 	private ImageButton deleteButton, websiteButton, visitedPlusOne;
 	private double[] lastKnownLocation;
 	TextView tv;
-
+	String website;
 	@SuppressWarnings("unused")
 	private Geocoder geocoder = null;
 
@@ -100,6 +100,16 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 				Log.v("MostVisitedAdapter", "get tv"+ ref.getName() +tv);
 				this.notifyDataSetChanged();
 			}
+			rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
+			Cursor c = rd.get_website_inDatabase(ref.getId());//Changed the query to find by res_id
+			int contactColumn = c.getColumnIndex("Rwebsite");	
+			if (c != null && c.getCount() > 0) {
+				c.moveToFirst();
+				website = c.getString(contactColumn);
+			}
+			if(website.equals("")){
+				websiteButton.setVisibility(View.GONE);
+			}
 			/*
 			 * Method to be implemented if the Contact button is clicked by the user. The method queries the database to
 			 * get the contact number of the restaurant and put it in the dialer for the user to call the restaurant.
@@ -107,23 +117,11 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 			websiteButton.setOnClickListener(new ButtonClickListener(ref){
 				@Override
 				public void onClick(View v) {
-					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-					Cursor c = rd.get_website_inDatabase(item.getId());//Changed the query to find by res_id
-					int contactColumn = c.getColumnIndex("Rwebsite");	
-					String website;
-					if (c != null) {
-						c.moveToFirst();
-						website = c.getString(contactColumn);
-					}
-					else website = "";
-					
 					Context context = getContext();
-					if(website != ""){
-						Uri uri = Uri.parse(website);
-						Log.v("Most Visited Adapter", "website url = "+ website);
-						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-						context.startActivity(intent);
-					}
+					Uri uri = Uri.parse(website);
+					Log.v("Most Visited Adapter", "website url = "+ website);
+					Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+					context.startActivity(intent);	
 				}
 				
 			});

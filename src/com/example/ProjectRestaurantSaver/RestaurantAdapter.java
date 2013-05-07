@@ -1,9 +1,5 @@
 package com.example.ProjectRestaurantSaver;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -36,13 +32,6 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 	private DatabaseOpenHelper rd;
 	private double[] lastKnownLocation;	
 	private RestaurantAsyncTaskFetchDetails detailsAsyncTask;
-	private TextView distanceLabel;
-	private ImageButton addButton;
-	private ImageButton dialButton;
-	private ImageButton directionsButton;
-	private TextView addressLabel;
-	private ImageButton favButton;
-	private TextView tt;
 	private double lat = 0.0;
 	private double lon = 0.0;
 	
@@ -56,8 +45,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 			int textViewResourceId, List<RestaurantReference> objects) {
 		super(context, resource, textViewResourceId, objects);	
 		dataObjects = objects;
-		calculateCurrentAddress(null /* we dont know the location yet */);
-		Log.v("RestaurantAdapter", "RestaurantAdapter constructor = "+ currentaddress);
+		calculateCurrentAddress(null );/* we dont know the location yet */
 	}
 	
 	// We are not calling this at this point to conserve the battery life.
@@ -65,7 +53,6 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 		
 		LocationManager lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 		
-		// Define a listener that responds to location updates
 		LocationListener locationListener = new LocationListener() {
 		    public void onLocationChanged(Location location) {
 		    	RestaurantAdapter.this.calculateCurrentAddress(location);
@@ -78,8 +65,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 
 			@Override
 			public void onStatusChanged(String provider, int status,Bundle extras) {
-				// TODO Auto-generated method stub
-				
+			
 			}
 		  };
 		  
@@ -100,12 +86,11 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 			lon = 0.0;
 		}
 		else{
-			//Log.v("Latitude", Double.toString(location.getLatitude()));
-			//Log.v("Longitude", Double.toString(location.getLongitude())); 		
+		
 			lat = location.getLatitude();
 			lon = location.getLongitude();
-			Log.v("RestaurantAdapter", "lat = "+lat);
-			Log.v("RestaurantAdapter", "lon"+lon); 
+			//Log.v("RestaurantAdapter", "lat = "+lat);
+			//Log.v("RestaurantAdapter", "lon"+lon); 
 			currentaddress = findAddressfromLatLng(lat, lon);
 			if(currentaddress == null) {
 				  currentaddress = "";
@@ -113,7 +98,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 			currentaddress = currentaddress.replaceAll("(\\r|\\n)", "");
 		}
 		
-	    Log.v("RestaurantAdapter", "onLocationChanged: current address 2 = "+ currentaddress);
+	    //Log.v("RestaurantAdapter", "onLocationChanged: current address 2 = "+ currentaddress);
 
 	}
 	
@@ -126,32 +111,28 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 	@SuppressWarnings("unused")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		
-		
 		View v = convertView;//Check to see if rows are already present for re-use or if new row needs to be created
 		if (v == null) {
 			LayoutInflater vi = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = vi.inflate(R.layout.restaurantrow, null);//create instance of the template for the particular row represented by position
-			addButton = (ImageButton) v.findViewById(R.id.add_button);
-			dialButton = (ImageButton) v.findViewById(R.id.contactButton);
-			directionsButton = (ImageButton) v.findViewById(R.id.directionsButton);
-			distanceLabel = (TextView) v.findViewById(R.id.distance_label);
-			addressLabel = (TextView) v.findViewById(R.id.address_label);
-			tt = (TextView) v.findViewById(R.id.label);
-			favButton = (ImageButton) v.findViewById(R.id.fav_button);
+			v = vi.inflate(R.layout.restaurantrow, parent, false);//create instance of the template for the particular row represented by position
+
 			
 		}
+		ImageButton addButton = (ImageButton) v.findViewById(R.id.add_button);
+		ImageButton dialButton = (ImageButton) v.findViewById(R.id.contactButton);
+		ImageButton directionsButton = (ImageButton) v.findViewById(R.id.directionsButton);
+		ImageButton favButton = (ImageButton) v.findViewById(R.id.fav_button);
 		
-		
-	    
 		//check if the restaurant is already marked as favorite
 		RestaurantReference ref = dataObjects.get(position);
-		Log.v("RestaurantAdapter", "RestaurantReference ref = "+ref);
+		Log.v("RestaurantAdapter", "position  = "+position + ", RestaurantReference ref.getName = "+ref.getName());
 		Log.v("RestaurantAdapter", "RestaurantReference ref.getName = "+ref.getName());
-		Log.v("RestaurantAdapter", "RestaurantReference ref.getAddress = "+ref.getAddress());
+		//Log.v("RestaurantAdapter", "RestaurantReference ref.getAddress = "+ref.getAddress());
 
 		if (ref != null) {
-			 
+			TextView tt = (TextView) v.findViewById(R.id.label);
+			TextView addressLabel = (TextView) v.findViewById(R.id.address_label);
+
 			if (ref.getName() != null) {
 				tt.setText(ref.getName());                            
 			}
@@ -174,12 +155,13 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 				distanceURL =  distanceURL.replaceAll(" ", "%20");
 			}
 			//String distanceURL = "http://maps.googleapis.com/maps/api/distancematrix/json?origins=401%20Castro%20St,%20Mountain%20View,%20CA%2094041,%20USA&destinations=800%20California%20StMountain%20View,%20CA%2094041&mode=driving&sensor=false&units=imperial";
-			//Log.v("distanceURL=", distanceURL);
+			Log.v("distanceURL=", distanceURL);
 			RestaurantAsyncTaskGetDistance getDistanceTask;
+			TextView distanceLabel = (TextView) v.findViewById(R.id.distance_label);
+
 			getDistanceTask = new RestaurantAsyncTaskGetDistance(this, distanceURL, distanceLabel);
 			getDistanceTask.setRestaurantAdapter(this);
 			getDistanceTask.execute();
-			
 			
 			rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 			Cursor c = rd.check_restaurant_favorite_inDatabase(ref.getId());

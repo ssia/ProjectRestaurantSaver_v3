@@ -13,6 +13,8 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -69,9 +71,9 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 			RestaurantHttpAsyncTask m_progressTask;
 			String[] keywords = {"", "american", "asian", "italian","mexican"};
 			//String[] keywords = {"indian"};
-			/*m_progressTask = new RestaurantHttpAsyncTask(NearbyRestaurantActivity.this, keywords);
+			m_progressTask = new RestaurantHttpAsyncTask(NearbyRestaurantActivity.this, keywords);
 			m_progressTask.setRestaurantAdapter(restaurantAdapter);
-			m_progressTask.execute();*/
+			m_progressTask.execute();
 		}
 	}
 
@@ -80,6 +82,7 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 		//Refresh button helps to refresh the restaurant list on location change. Again it makes a call to the webservice using Async Task
 		if(v.getId() == refreshButton.getId() ){
 
+		
 			//check network connectivity before refresh
 			boolean checkConnection = isNetworkAvailable();
 			if(!checkConnection){

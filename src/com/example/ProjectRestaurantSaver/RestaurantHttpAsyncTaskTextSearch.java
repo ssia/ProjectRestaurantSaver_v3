@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,7 +37,7 @@ public class RestaurantHttpAsyncTaskTextSearch extends AsyncTask<Void, Void, Arr
 
 	@Override
 	protected ArrayList<RestaurantReference> doInBackground(Void... params) {
-		ArrayList<RestaurantReference> listItems;
+		ArrayList<RestaurantReference> listItems, listReturn;
 		listItems = new ArrayList<RestaurantReference>();
 		BufferedReader in = null;
 		try{
@@ -91,9 +92,28 @@ public class RestaurantHttpAsyncTaskTextSearch extends AsyncTask<Void, Void, Arr
 				}
 			}
 		}
-		Log.v("RestaurantsTextSearch", "Got " + listItems.size() + " restaurants");
+		//Log.v("RestaurantsTextSearch", "Got " + listItems.size() + " restaurants");
+		
+		//Remove any duplicating restaurant value
+		HashMap<String, RestaurantReference> resMap = new HashMap <String, RestaurantReference>();
+		for(int i = 0; i < listItems.size(); i++){
+			resMap.put(listItems.get(i).getId(), listItems.get(i));
+			
+		}
+		Log.v("RestaurantHttpAsyncTaskTextSearch", "resMap = " + resMap.size());
+		ArrayList<RestaurantReference> valuesList = new ArrayList<RestaurantReference>(resMap.values());
+		Log.v("RestaurantHttpAsyncTaskTextSearch", "valuesList.size() = " + valuesList.size());
 
-		return listItems;
+		for(int i = 0; i < valuesList.size(); i++){
+			Log.v("RestaurantHttpAsyncTaskTextSearch", "valuesList = " + valuesList.get(i).getName() + " "+  valuesList.get(i).getId());
+		}
+		/*listReturn = new ArrayList<RestaurantReference>();
+		for(int i = 0; i < resMap.size() ; i++){
+			listReturn.add(resMap.);
+			Log.v("RestaurantHttpAsyncTaskTextSearch", "getName()" + listReturn.get(i).getName());
+		}*/
+		
+		return valuesList;
 	}
 
 
