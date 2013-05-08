@@ -179,17 +179,29 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {			      	
 							//Yes button clicked, do something
-							
+							Log.v("Favorite Adapter", "item.getId()  = "+item.getId());
+
 							rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 							RestaurantApplication restaurantApplication = (RestaurantApplication) getContext().getApplicationContext();
 							Cursor all = rd.check_restaurant_favorite_inDatabase(item.getId());//Changed the query to find by res_id
-							int timesColumn = all.getColumnIndex("noOfTimes");	
+							int timesColumn = 0;
+							String favoriteData = "";
+							if (all != null) {
+								all.moveToFirst();
+								timesColumn = all.getColumnIndex("NoOfTimes");	
+								favoriteData = all.getString(timesColumn);
+							}
+							Log.v("Favorite Restaurant Adapter", "fav timesColumn  = "+favoriteData);
+
 							//Check if the restaurant is present in the MostVistited list.If yes, then only change the Favorites entry, else delete the Restaurant entry from the database.
-							if(timesColumn == 0){
+							if(Integer.parseInt(favoriteData) < 1){
 								boolean c = rd.deleteRowInList(item.getId());//Changed the query to find by res_id
+								Log.v("Favorite Restaurant Adapter", "Boolean c = "+c);
 							}
 							else{
 								rd.removeRFavoriteInDatabase(item.getId());//Changed the query to find by res_id
+								Log.v("Favorite Restaurant Adapter", " else Boolean c = ");
+
 							}
 							FavoriteRestaurantAdapter.this.remove(item);//inner class accessing the parent to remove just the particular row of the list
 							

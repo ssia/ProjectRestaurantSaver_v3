@@ -152,7 +152,8 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	public Cursor check_restaurant_favorite_inDatabase(String res_id){
 
 		SQLiteDatabase db = getReadableDatabase();
-		String q = "SELECT * FROM restaurants WHERE _id = " +"\"" +res_id + "\""+ ";";
+		String q = "SELECT * FROM restaurants WHERE _id = " +"\"" +res_id + "\"";
+		Log.v("Database", "q="+q);
 		Cursor mCursor = db.rawQuery(q, null);
 		return mCursor;
 	}

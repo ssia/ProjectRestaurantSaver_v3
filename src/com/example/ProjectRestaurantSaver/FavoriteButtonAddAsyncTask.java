@@ -56,7 +56,7 @@ public class FavoriteButtonAddAsyncTask extends AsyncTask<Void, Void, Void> {
 	
 	
 	@Override
-	protected Void doInBackground(Void... params) {
+	protected  Void doInBackground(Void... params) {
 		rd = DatabaseOpenHelper.getOrCreateInstance(context, "restaurantSaver.db", null, 0);
 		Log.v("FavoriteButtonAsyncTask", "RestaurantAdapter, Restaurant Address and Phone No ="+nameOfRes+" resId="+resId +" address ="+address+" "+contact+ checkIfFav);
 		Log.v("FavoriteButtonAsyncTask", "Item.Name"+item.getName()+" item.id="+item.getId());

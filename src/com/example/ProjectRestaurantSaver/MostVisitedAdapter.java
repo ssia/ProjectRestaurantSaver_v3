@@ -245,11 +245,22 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 						public void onClick(DialogInterface dialog, int which) {			      	
 							//Yes button clicked, do something										
 							rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
+							Log.v("MostVisited Adapter", "item.getId()  = "+item.getId());
+							int favColumn = 0;
+							String favoriteData = "";
 							Cursor all = rd.check_restaurant_favorite_inDatabase(item.getId());
-							int favColumn = all.getColumnIndex("RFavorite");	
+							if (all != null) {
+								all.moveToFirst();
+								favColumn = all.getColumnIndex("RFavorite");
+								favoriteData =all.getString(favColumn);
+
+							}
+							
 							/*check if the restaurant is marked as Favorties. If yes, then only remove entry from NoOfTimes Column in the database
 							If the restaurant is not marked as Favorites, then remove the entry for the restaurant from the database*/
-							if(favColumn == 0){
+							Log.v("MostVisited Adapter", " favColumn  = "+favoriteData);
+
+							if(Integer.parseInt(favoriteData) < 1){
 								boolean c = rd.deleteRowInList(item.getId());
 							}
 							else{
