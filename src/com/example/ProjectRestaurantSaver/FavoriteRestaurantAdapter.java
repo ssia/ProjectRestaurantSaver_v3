@@ -183,7 +183,6 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 							rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 							RestaurantApplication restaurantApplication = (RestaurantApplication) getContext().getApplicationContext();
 							Cursor all = rd.check_restaurant_favorite_inDatabase(item.getId());//Changed the query to find by res_id
-							
 							int timesColumn = all.getColumnIndex("noOfTimes");	
 							//Check if the restaurant is present in the MostVistited list.If yes, then only change the Favorites entry, else delete the Restaurant entry from the database.
 							if(timesColumn == 0){

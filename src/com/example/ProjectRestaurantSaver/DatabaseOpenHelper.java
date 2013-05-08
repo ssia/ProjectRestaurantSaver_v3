@@ -449,5 +449,23 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 		return mCursor;
 	}
 
+	public boolean removeRratingFromRestaurantRow(String resId) {
+		SQLiteDatabase db = getReadableDatabase();
+		int count;
+		String[] whereArgs = new String[]{(resId)};
+		try {  
+			db.beginTransaction();
+			ContentValues val = new ContentValues();
+			val.put(restaurantRatings, 0);
+			count = db.update(restaurantTable, val, restaurantId+"=?", whereArgs );
+			db.setTransactionSuccessful();
+		} 
+		finally{
+			db.endTransaction();
+		}
+		return true;
+		
+	}
+
 
 }

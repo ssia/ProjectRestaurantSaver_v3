@@ -123,7 +123,6 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 		ImageButton directionsButton = (ImageButton) v.findViewById(R.id.directionsButton);
 		ImageButton favButton = (ImageButton) v.findViewById(R.id.fav_button);
 		
-		//check if the restaurant is already marked as favorite
 		RestaurantReference ref = dataObjects.get(position);
 		Log.v("RestaurantAdapter", "position  = "+position + ", RestaurantReference ref.getName = "+ref.getName());
 		Log.v("RestaurantAdapter", "RestaurantReference ref.getName = "+ref.getName());
@@ -155,7 +154,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 				distanceURL =  distanceURL.replaceAll(" ", "%20");
 			}
 			//String distanceURL = "http://maps.googleapis.com/maps/api/distancematrix/json?origins=401%20Castro%20St,%20Mountain%20View,%20CA%2094041,%20USA&destinations=800%20California%20StMountain%20View,%20CA%2094041&mode=driving&sensor=false&units=imperial";
-			Log.v("distanceURL=", distanceURL);
+			Log.v("distanceURL=", ""+distanceURL);
 			RestaurantAsyncTaskGetDistance getDistanceTask;
 			TextView distanceLabel = (TextView) v.findViewById(R.id.distance_label);
 
@@ -166,15 +165,18 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 			rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 			Cursor c = rd.check_restaurant_favorite_inDatabase(ref.getId());
 			int rFavValue = 0;
-			try{
-				c.moveToFirst();
-
-				if (c.moveToFirst()) {
-					int rFavorite = c.getColumnIndex("RFavorite");
-					rFavValue = c.getInt(rFavorite);
+			Log.v("RestaurantAdapter", "c.getCount() > 0"+c.getCount());
+			if(c != null && c.getCount() > 0){
+				try{
+					c.moveToFirst();
+	
+					if (c.moveToFirst()) {
+						int rFavorite = c.getColumnIndex("RFavorite");
+						rFavValue = c.getInt(rFavorite);
+					}
+				} finally{
+					c.close();
 				}
-			} finally{
-				c.close();
 			}
 			//If the restaurant is marked as favorite, then display a green star or else display a grey star
 		
@@ -196,7 +198,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 					Toast.makeText(getContext(), item.getName() + " added to Visits", Toast.LENGTH_SHORT).show();
 					String nameOfRes = item.getName();
 					String resId = item.getId();
-
+					Context context = getContext();
 					RestaurantDetails details = fetchRestaurantDetails(item);
 					String address = details.getAddress();
 					String contact = details.getPhoneNumber();		
@@ -204,30 +206,10 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 					if(website == null)
 						website = "";
 					Log.v("Restaurant Adapter", "website= "+website);
-					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-					Cursor c = rd.check_restaurant_visited_inDatabase(resId);
-					try{
-							
-						if (c != null) {
-							c.moveToFirst();
-							if (c.isFirst()) {
-								int firstNameColumn = c.getColumnIndex("_id");
-								String firstName = c.getString(firstNameColumn);								
-								int timesNameColumn = c.getColumnIndex("NoOfTimes");
-								String timesName = c.getString(timesNameColumn);
-								c.moveToFirst();
-								int num = Integer.parseInt(timesName);
-								num = num + 1;
-								rd.updateTimesInDatabase(resId, num); //???if the restaurant was already visited in the past increase the number of visits by 1
-							}
-							else{ //create a new entry for the restaurant
-								rd.insert_mostVisited(resId, nameOfRes, 1, address, contact, website);
-							}
-						}	
-					} 
-					finally{
-						c.close();
-					}
+					PlusButtonAsyncTask plusAsyncTask;
+
+					plusAsyncTask = new PlusButtonAsyncTask(context, address, contact, website,  nameOfRes, resId);
+					plusAsyncTask.execute();
 				}
 			}); 
 
@@ -259,57 +241,33 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 					String address = details.getAddress();
 					String contact = details.getPhoneNumber();
 					String website = details.getWebsite();//adding website link
+					Context context = getContext();
+
 					if(website == null)
 						website = "";
 					ImageButton btn = (ImageButton)v;
+					
+					
+					FavoriteButtonAddAsyncTask favAsyncTask;
 
-					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-					if(!item.isInFavorites()) {//if the restaurant is not in favorites make it a favorite
-						//Log.v("RestaurantAdapter, Restaurant Address and Phone No =", address+" "+contact);
+					favAsyncTask = new FavoriteButtonAddAsyncTask(context, address, contact, website,  nameOfRes, resId, item.isInFavorites(), item);
+					favAsyncTask.execute();
+					
+					if(!item.isInFavorites()) {
+						Log.v("RestaurantAdapter", "item.isInFavorites()"+item.isInFavorites());
 						btn.setImageResource((R.drawable.star_green));
 						item.setInFavorites(true);
 						Toast.makeText(getContext(), item.getName() +" added to Favorites", Toast.LENGTH_SHORT).show();
 
-						Cursor c = rd.check_restaurant_favorite_inDatabase(resId);
-
-						if (c != null) {
-							//Log.v("Restaurant Adapter, Column No. of RName =  ", ""+firstNameColumn);
-							c.moveToFirst();
-							if (c.isFirst()) {
-								int firstNameColumn = c.getColumnIndex("_id");	
-								String firstName = c.getString(firstNameColumn);
-								int favNameColumn = c.getColumnIndex("RFavorite");
-								String favName = c.getString(favNameColumn);
-								//Log.v("Restaurant Adapter, RFavorite =", ""+favName);
-								c.moveToFirst();
-								rd.favTimesInDatabase(resId);
-							} else{
-								rd.insert_fav(resId, nameOfRes, address, contact, website);
-							}
-						}
-
-					} else {//if the restaurant is already marked as a Favorite, remove it from Favorite's.
+					}
+					
+					else{
 						btn.setImageResource((R.drawable.star));
 						Toast.makeText(getContext(), item.getName() +" removed from Favorites", Toast.LENGTH_SHORT).show();
-
-						Cursor c = rd.check_restaurant_visited_inDatabase(item.getId());
-						try {
-							boolean exists = c.moveToFirst();
-							if(exists) {
-								int numVisited = c.getInt(c.getColumnIndex("NoOfTimes"));
-
-								if(numVisited > 0) {
-									rd.favTimesInDatabase(resId, false);
-								} else {
-									rd.deleteRowInList(item.getId());
-								}
-
-								item.setInFavorites(false);
-							}
-						} finally {
-							c.close();
-						}
+						item.setInFavorites(false);
 					}
+
+
 				}	
 			});
 			

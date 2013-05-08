@@ -58,9 +58,9 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 			lon = location.getLongitude();
 		}
 		try{
-			String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius=700&types=restaurant&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
+			//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius=700&types=restaurant&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
 			//Log.v("URLdef", urldef);
-			//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.391351,-122.04566&radius=700&types=restaurant&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
+			String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.391351,-122.04566&radius=700&types=restaurant&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
 			for(String keyword: keywords) {
 				URLConnection tc = null;
 				BufferedReader in = null;

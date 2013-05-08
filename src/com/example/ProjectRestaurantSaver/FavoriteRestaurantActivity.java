@@ -140,23 +140,29 @@ public class FavoriteRestaurantActivity extends ListActivity implements OnClickL
 	public void onClick(View v) {
 		if(v.getId() == publishButton.getId()){
 			String restaurantList = " ";
+			String postMessage = "";
 			int j = 1;
 			Intent postOnFacebookWallIntent = new Intent(this, ShareOnFacebook.class);
 			rd = DatabaseOpenHelper.getOrCreateInstance(getApplicationContext(), "restaurantSaver.db", null, 0);
 			Cursor c = rd.getTopTenFavoriteRestaurantNames();
 			if (c != null) {
+				String resName = "";
 				c.moveToFirst();
 				while (!c.isAfterLast()) {
-					String resName = c.getString(c.getColumnIndex("RName"));
-					String resRating = c.getString(c.getColumnIndex("Rrating"));
-					if (resRating == null)
-						resRating = "0";
-					restaurantList= restaurantList+ j+ "."+ resName+" (Rating-"+ resRating+")"+"\n";
+				    resName = c.getString(c.getColumnIndex("RName"));
+				
+					restaurantList= restaurantList+ j+ "."+ resName+"\n";
 					j++;
 					c.moveToNext();
 				}
+				if(resName.length() < 1){
+					postMessage = "No Restaurants to post";
+				}
+				else 
+					postMessage = "My Top Ten Favorite Restaurants are \n\n"+restaurantList;
 			}
-			String postMessage = "My Top Ten Favorite Restaurants are \n\n"+restaurantList;
+			
+			//String postMessage = "My Top Ten Favorite Restaurants are \n\n"+restaurantList;
 			//Log.v("facebook message", postMessage);
 			postOnFacebookWallIntent.putExtra("facebookMessage", postMessage);
 			startActivity(postOnFacebookWallIntent);		

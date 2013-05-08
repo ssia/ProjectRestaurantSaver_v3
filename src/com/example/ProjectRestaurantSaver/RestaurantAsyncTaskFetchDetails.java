@@ -6,11 +6,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.json.JSONObject;
-import android.app.ListActivity;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.location.Location;
-import android.location.LocationManager;
+
 import android.os.AsyncTask;
 import android.util.Log;
 
