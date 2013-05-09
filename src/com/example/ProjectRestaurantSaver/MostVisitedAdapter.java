@@ -1,20 +1,10 @@
 package com.example.ProjectRestaurantSaver;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.example.ProjectRestaurantSaver.FavoriteRestaurantAdapter.ButtonClickListener;
-import com.example.ProjectRestaurantSaver.application.RestaurantApplication;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -30,9 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -249,10 +237,10 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 							int favColumn = 0;
 							String favoriteData = "";
 							Cursor all = rd.check_restaurant_favorite_inDatabase(item.getId());
-							if (all != null) {
+							if (all != null && all.getCount() > 0) {
 								all.moveToFirst();
 								favColumn = all.getColumnIndex("RFavorite");
-								favoriteData =all.getString(favColumn);
+								favoriteData = all.getString(favColumn);
 
 							}
 							
@@ -264,6 +252,7 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 								boolean c = rd.deleteRowInList(item.getId());
 							}
 							else{
+								Log.v("MostVisited Adapter", "Hi ddelete!!!");
 								rd.removeMVisitedInDatabase(item.getId());
 							}
 							MostVisitedAdapter.this.remove(item);//inner class accessing the parent to remove just the particular row of the list

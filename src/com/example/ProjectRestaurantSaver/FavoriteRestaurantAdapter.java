@@ -186,7 +186,7 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 							Cursor all = rd.check_restaurant_favorite_inDatabase(item.getId());//Changed the query to find by res_id
 							int timesColumn = 0;
 							String favoriteData = "";
-							if (all != null) {
+							if (all != null && all.getCount() > 0) {
 								all.moveToFirst();
 								timesColumn = all.getColumnIndex("NoOfTimes");	
 								favoriteData = all.getString(timesColumn);

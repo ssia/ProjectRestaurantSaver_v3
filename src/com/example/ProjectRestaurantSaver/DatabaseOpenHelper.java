@@ -32,7 +32,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 
 	private static DatabaseOpenHelper rd;
 
-	public DatabaseOpenHelper(Context context, String name,
+	public  DatabaseOpenHelper(Context context, String name,
 			CursorFactory factory, int version) {
 		super(context, name, null, 33);
 	}
@@ -53,7 +53,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * Create a restaurant database with the name passed as string "name" by the user
 	 */
 	@Override
-	public void onCreate(SQLiteDatabase db) {
+	public synchronized void onCreate(SQLiteDatabase db) {
 		db.execSQL(CREATE_RESTAURANT_SQL);
 		ContentValues cv = new ContentValues(); 
 		cv.put(restaurantId, "");
@@ -65,7 +65,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 
 
 	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+	public synchronized void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// TODO Auto-generated method stub
 	}
 
@@ -73,7 +73,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * Insert the name of the restaurant, the number of times and address of the restaurant as the user selects the
 	 * restaurant to add to the "Most visited list"
 	 */
-	public void insert_mostVisited(String id, String name, int times, String address, String contact, String website){
+	public synchronized void insert_mostVisited(String id, String name, int times, String address, String contact, String website){
 		SQLiteDatabase db = getWritableDatabase();
 		ContentValues values = new ContentValues();
 		
@@ -92,7 +92,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * Insert the name of the restaurant, the number of times and address of the restaurant as the user selects the
 	 * restaurant to add to the "Most visited list"
 	 */
-	public void insert_fav(String id, String name, String address, String contact, String website){
+	public synchronized void insert_fav(String id, String name, String address, String contact, String website){
 		SQLiteDatabase db = getWritableDatabase();
 		ContentValues values = new ContentValues();
 		
@@ -110,7 +110,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	/*
 	 * Cursor to derive all the columns from the restaurants table
 	 */
-	public Cursor all(){
+	public synchronized Cursor all(){
 		String[] from = {restaurantId, restaurantName, noOfTimes, restaurantAddress, restaurantContact};
 		String order = restaurantName;
 
@@ -125,7 +125,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * count of NoOfTimes is updated to one. If the count is not null then it means that the user has add the restaurant earlier
 	 * in which case the number of times is updated by one and written again into the database.
 	 */
-	public Cursor check_restaurant_visited_inDatabase(String res_id){
+	public synchronized Cursor check_restaurant_visited_inDatabase(String res_id){
 
 		SQLiteDatabase db = getReadableDatabase();
 		String q = "SELECT * FROM restaurants WHERE _id = " +"\"" +res_id + "\""+ ";";
@@ -133,7 +133,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 		return mCursor;
 	}
 	
-	public Cursor getStats() {
+	public synchronized Cursor getStats() {
 		
 		SQLiteDatabase db = getReadableDatabase();
 		String q = "SELECT ROWID as _id, RName, NoOfTimes, Rrating FROM (SELECT RName, SUM(NoOfTimes) as NoOfTimes, SUM(CASE WHEN Rrating > 0 THEN Rrating ELSE 0 END)*1.0/COUNT(CASE WHEN Rrating > 0 THEN Rrating ELSE 0 END)  as Rrating FROM restaurants WHERE RFavorite != 0 OR NoOfTimes !=0 GROUP BY LOWER(RName));";
@@ -149,7 +149,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * count of NoOfTimes is updated to one. If the count is not null then it means that the user has add the restaurant earlier
 	 * in which case the number of times is updated by one and written again into the database.
 	 */
-	public Cursor check_restaurant_favorite_inDatabase(String res_id){
+	public synchronized Cursor check_restaurant_favorite_inDatabase(String res_id){
 
 		SQLiteDatabase db = getReadableDatabase();
 		String q = "SELECT * FROM restaurants WHERE _id = " +"\"" +res_id + "\"";
@@ -162,7 +162,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * Query to get the RestaurantId of restaurant listed as favorite restaurant
 	 * 
 	 */
-	public Cursor getFavoriteRestaurantNames(){
+	public synchronized Cursor getFavoriteRestaurantNames(){
 		SQLiteDatabase db = getReadableDatabase();
 		//Cursor cursor = db.query(restaurantTable, new String[] {"RName", "NoOfTimes"}, null, null, null, null, "NoOfTimes ASC");
 		String q = "SELECT RName, _id, Rrating FROM restaurants WHERE RFavorite == 1 Order By Rrating DESC;";
@@ -176,7 +176,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * The method updates the "NoOfTimes" parameter against the restaurant selected by the user by "1". It takes NoOfTimes and the Restaurant 
 	 * Name as the parameter
 	 */
-	public int updateTimesInDatabase(String res_id, int times){
+	public synchronized int updateTimesInDatabase(String res_id, int times){
 		SQLiteDatabase db = getReadableDatabase();
 		int count;
 		String[] whereArgs = new String[]{(res_id)};
@@ -193,12 +193,12 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 		return count;
 	}
 
-	public boolean favTimesInDatabase(String resId){
+	public synchronized boolean favTimesInDatabase(String resId){
 		return favTimesInDatabase(resId, true);
 	}
 
 	//Query to set the Favorite table according to the passed argument. The Favorite column is updated in the database against the restaurant name obtained as an argument. 
-	public boolean favTimesInDatabase(String res_id, boolean setInFavorites){
+	public synchronized boolean favTimesInDatabase(String res_id, boolean setInFavorites){
 		SQLiteDatabase db = getReadableDatabase();
 		int count;
 		String[] whereArgs = new String[]{(res_id)};
@@ -220,7 +220,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	//Execute this code when the database file is accessed
 	//	Fires when Activity uses getReadableDatabase or getWriteableDatabase
 	@Override
-	public void onOpen(SQLiteDatabase db){
+	public synchronized void onOpen(SQLiteDatabase db){
 		super.onOpen(db);
 	}
 
@@ -235,7 +235,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	}
 
 	//Return the contact phone number of the restaurant obtain as argument.
-	public Cursor check_restaurant_contact_inDatabase(String id) {
+	public synchronized Cursor check_restaurant_contact_inDatabase(String id) {
 		SQLiteDatabase db = getReadableDatabase();
 		String q = "SELECT RContact FROM restaurants WHERE _id = " +"\"" +id + "\""+ ";";
 		Cursor mCursor = db.rawQuery(q, null);
@@ -243,7 +243,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	}
 
 	//Return the address of the restaurant obtained as argument.
-	public Cursor check_restaurant_address_inDatabase(String id) {
+	public synchronized Cursor check_restaurant_address_inDatabase(String id) {
 		SQLiteDatabase db = getReadableDatabase();
 		String q = "SELECT RAddress FROM restaurants WHERE _id = " +"\"" +id + "\""+ ";";
 		Cursor mCursor = db.rawQuery(q, null);
@@ -251,7 +251,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	}
 
 	//Return the address of the restaurant obtained as argument.
-	public Cursor getRestaurantAddressesByName(String name) {
+	public synchronized Cursor getRestaurantAddressesByName(String name) {
 		SQLiteDatabase db = getReadableDatabase();
 		String q = "SELECT RAddress FROM restaurants WHERE RName = " +"\"" +name + "\""+ ";";
 		Cursor mCursor = db.rawQuery(q, null);
@@ -259,14 +259,14 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	}
 
 
-	public Cursor get_website_inDatabase(String id) {
+	public synchronized Cursor get_website_inDatabase(String id) {
 		SQLiteDatabase db = getReadableDatabase();
 		String q = "SELECT Rwebsite FROM restaurants WHERE _id = " +"\"" +id + "\""+ ";";
 		Cursor mCursor = db.rawQuery(q, null);
 		return mCursor;
 	}
 	//Get a list of the top 10 favorite restaurants
-	public Cursor getTopTenFavoriteRestaurantNames() {
+	public synchronized Cursor getTopTenFavoriteRestaurantNames() {
 		SQLiteDatabase db = getReadableDatabase();
 		String q = "select RName from restaurants where RFavorite == 1 order by Rrating DESC limit 10;";
 		Cursor mCursor = db.rawQuery(q, null);
@@ -274,7 +274,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	}
 
 	//Get a list of top 10 restaurants which the user visited the most.
-	public Cursor getTopTenMostVisitedRestaurantNames() {
+	public synchronized Cursor getTopTenMostVisitedRestaurantNames() {
 		SQLiteDatabase db = getReadableDatabase();
 		String q = "select RName from restaurants where NoOfTimes != 0 order by NoOfTimes DESC limit 10;";
 		Cursor mCursor = db.rawQuery(q, null);
@@ -282,7 +282,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	}
 
 	//Update the ratings column against the Restaurant name obtained as an argument 
-	public int updateRatingInDatabase(String res_id, float ratings){
+	public synchronized int updateRatingInDatabase(String res_id, float ratings){
 		SQLiteDatabase db = getReadableDatabase();
 		int count;
 		String[] whereArgs = new String[]{(res_id)};
@@ -300,7 +300,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	}
 
 	//Delete the row for the Restaurant received as argument
-	public boolean deleteRowInList(String res_id){
+	public synchronized boolean deleteRowInList(String res_id){
 		SQLiteDatabase db = getReadableDatabase();
 		String[] whereArgs = new String[]{(res_id)};
 		try {  
@@ -315,7 +315,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	}
 
 	//Make the value of the RFavorite Column '0' against the Restaurant name obtained as argument
-	public boolean removeRFavoriteInDatabase(String res_id){
+	public synchronized boolean removeRFavoriteInDatabase(String res_id){
 		SQLiteDatabase db = getReadableDatabase();
 		String[] whereArgs = new String[]{(res_id)};
 
@@ -336,7 +336,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	}
 
 	//Make the 'NoOfTimes" entry 0 against the Restaurant obtained as argument
-	public boolean removeMVisitedInDatabase(String id) {
+	public synchronized boolean removeMVisitedInDatabase(String id) {
 		SQLiteDatabase db = getReadableDatabase();
 		String[] whereArgs = new String[]{(id)};
 
@@ -357,7 +357,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * Query to get the RestaurantId of restaurant and number of times the restaurant is visited in Descending Order of Times
 	 * 
 	 */
-	public Cursor get_restaurantName_timesVisitedDesc(){
+	public synchronized Cursor get_restaurantName_timesVisitedDesc(){
 		SQLiteDatabase db = getReadableDatabase();
 		//Cursor cursor = db.query(restaurantTable, new String[] {"RName", "NoOfTimes"}, null, null, null, null, "NoOfTimes ASC");
 		String q = "SELECT _id, RName, NoOfTimes FROM restaurants WHERE NoOfTimes != 0 ORDER BY NoOfTimes DESC;";
@@ -369,7 +369,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * Query to get the RestaurantId of restaurant and number of times the restaurant is visited in Ascending Order of Times
 	 * 
 	 */
-	public Cursor get_restaurantName_timesVisitedAsc(){
+	public synchronized Cursor get_restaurantName_timesVisitedAsc(){
 		SQLiteDatabase db = getReadableDatabase();
 		//Cursor cursor = db.query(restaurantTable, new String[] {"RName", "NoOfTimes"}, null, null, null, null, "NoOfTimes ASC");
 		String q = "SELECT _id, RName, NoOfTimes FROM restaurants WHERE NoOfTimes != 0 ORDER BY NoOfTimes ASC;";
@@ -381,7 +381,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * Query to get the RestaurantId of restaurant and number of times the restaurant is visited in Ascending Order of Name
 	 * 
 	 */
-	public Cursor sortVisitedRestaurantsByNameAsc() {
+	public synchronized Cursor sortVisitedRestaurantsByNameAsc() {
 		SQLiteDatabase db = getReadableDatabase();
 		//Cursor cursor = db.query(restaurantTable, new String[] {"RName", "NoOfTimes"}, null, null, null, null, "NoOfTimes ASC");
 		String q = "SELECT _id, RName, NoOfTimes FROM restaurants WHERE NoOfTimes != 0 ORDER BY RName ASC;";
@@ -393,7 +393,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * Query to get the RestaurantId of restaurant and number of times the restaurant is visited in Descending Order of Name
 	 * 
 	 */
-	public Cursor sortVisitedRestaurantsByNameDesc() {
+	public synchronized Cursor sortVisitedRestaurantsByNameDesc() {
 		SQLiteDatabase db = getReadableDatabase();
 		//Cursor cursor = db.query(restaurantTable, new String[] {"RName", "NoOfTimes"}, null, null, null, null, "NoOfTimes ASC");
 		String q = "SELECT _id, RName, NoOfTimes FROM restaurants WHERE NoOfTimes != 0 ORDER BY RName DESC;";
@@ -406,7 +406,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * Query to get the RestaurantId of restaurant and rating of the restaurant is visited in Descending Order of Rating
 	 * 
 	 */
-	public Cursor get_restaurantNameRatingDesc(){
+	public synchronized Cursor get_restaurantNameRatingDesc(){
 		SQLiteDatabase db = getReadableDatabase();
 		//Cursor cursor = db.query(restaurantTable, new String[] {"RName", "NoOfTimes"}, null, null, null, null, "NoOfTimes ASC");
 		String q = "SELECT _id, RName, Rrating FROM restaurants WHERE RFavorite == 1 ORDER BY Rrating DESC;";
@@ -418,7 +418,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * Query to get the RestaurantId of restaurant and rating of the restaurant is visited in Ascending Order of Rating
 	 * 
 	 */
-	public Cursor get_restaurantNameRatingAsc(){
+	public synchronized Cursor get_restaurantNameRatingAsc(){
 		SQLiteDatabase db = getReadableDatabase();
 		//Cursor cursor = db.query(restaurantTable, new String[] {"RName", "NoOfTimes"}, null, null, null, null, "NoOfTimes ASC");
 		String q = "SELECT _id, RName, Rrating FROM restaurants WHERE RFavorite == 1 ORDER BY Rrating ASC;";
@@ -430,7 +430,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * Query to get the RestaurantId of restaurant and Rating of the restaurant is visited in Ascending Order of Name
 	 * 
 	 */
-	public Cursor sortFavRestaurantsByNameAsc() {
+	public synchronized Cursor sortFavRestaurantsByNameAsc() {
 		SQLiteDatabase db = getReadableDatabase();
 		//Cursor cursor = db.query(restaurantTable, new String[] {"RName", "NoOfTimes"}, null, null, null, null, "NoOfTimes ASC");
 		String q = "SELECT _id, RName, Rrating FROM restaurants WHERE RFavorite == 1 ORDER BY RName ASC;";
@@ -442,7 +442,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 	 * Query to get the RestaurantId of restaurant and Rating of the restaurant is visited in Descending Order of Name
 	 * 
 	 */
-	public Cursor sortFavRestaurantsByNameDesc() {
+	public synchronized Cursor sortFavRestaurantsByNameDesc() {
 		SQLiteDatabase db = getReadableDatabase();
 		//Cursor cursor = db.query(restaurantTable, new String[] {"RName", "NoOfTimes"}, null, null, null, null, "NoOfTimes ASC");
 		String q = "SELECT _id, RName, Rrating FROM restaurants WHERE RFavorite == 1 ORDER BY RName DESC;";
@@ -450,7 +450,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper{
 		return mCursor;
 	}
 
-	public boolean removeRratingFromRestaurantRow(String resId) {
+	public synchronized boolean removeRratingFromRestaurantRow(String resId) {
 		SQLiteDatabase db = getReadableDatabase();
 		int count;
 		String[] whereArgs = new String[]{(resId)};

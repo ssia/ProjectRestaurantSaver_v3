@@ -196,6 +196,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 					Toast.makeText(getContext(), item.getName() + " added to Visits", Toast.LENGTH_SHORT).show();
 					String nameOfRes = item.getName();
 					String resId = item.getId();
+					Context context = getContext();
 
 					RestaurantDetails details = fetchRestaurantDetails(item);
 					String address = details.getAddress();
@@ -204,6 +205,9 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 					if(website == null)
 						website = "";
 					Log.v("Restaurant Adapter", "website= "+website);
+					PlusButtonAsyncTask plusAsync = new PlusButtonAsyncTask(context, address, contact, website, nameOfRes, resId);
+					plusAsync.execute();
+					/*
 					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 					Cursor c = rd.check_restaurant_visited_inDatabase(resId);
 					try{
@@ -227,7 +231,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 					} 
 					finally{
 						c.close();
-					}
+					}*/
 				}
 			}); 
 
