@@ -159,7 +159,7 @@ public class FavoriteRestaurantActivity extends ListActivity implements OnClickL
 					postMessage = "No Restaurants to post";
 				}
 				else 
-					postMessage = "My Top Ten Favorite Restaurants are \n\n"+restaurantList;
+					postMessage = "My Favorite Restaurants are \n\n"+restaurantList;
 			}
 			
 			//String postMessage = "My Top Ten Favorite Restaurants are \n\n"+restaurantList;

@@ -153,7 +153,7 @@ public class MostVisitedActivity  extends ListActivity implements OnClickListene
 					c.moveToNext();
 				}
 			}
-			String postMessage = "My Top Ten Most Visited Restaurants are \n\n"+restaurantList;
+			String postMessage = "The Restaurants I visit the most are \n\n"+restaurantList;
 			Log.v("facebook message", postMessage);
 			postOnFacebookWallIntent.putExtra("facebookMessage", postMessage);
 			startActivity(postOnFacebookWallIntent);		

@@ -256,7 +256,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 
 				@Override
 				public void onClick(View v) {
-					System.out.println(item.getName() + " get fav = "+ item + " "+item.isInFavorites());
+					System.out.println(item.getName() + " get fav = "+ item + " "+item.getInFavorites());
 					String nameOfRes = item.getName();
 					String resId = item.getId();
 					RestaurantDetails details = fetchRestaurantDetails(item);
@@ -268,13 +268,14 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 					ImageButton btn = (ImageButton)v;
 
 					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-					if(!item.isInFavorites()) {//if the restaurant is not in favorites make it a favorite
+					boolean checkIfFav = item.getInFavorites();
+					if(!item.getInFavorites()) {//if the restaurant is not in favorites make it a favorite
 						//Log.v("RestaurantAdapter, Restaurant Address and Phone No =", address+" "+contact);
 						btn.setImageResource((R.drawable.star_green));
 						item.setInFavorites(true);
 						Toast.makeText(getContext(), item.getName() +" added to Favorites", Toast.LENGTH_SHORT).show();
 
-						Cursor c = rd.check_restaurant_favorite_inDatabase(resId);
+						/*Cursor c = rd.check_restaurant_favorite_inDatabase(resId);
 
 						if (c != null) {
 							//Log.v("Restaurant Adapter, Column No. of RName =  ", ""+firstNameColumn);
@@ -290,13 +291,13 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 							} else{
 								rd.insert_fav(resId, nameOfRes, address, contact, website);
 							}
-						}
+						}*/
 
 					} else {//if the restaurant is already marked as a Favorite, remove it from Favorite's.
 						btn.setImageResource((R.drawable.star));
 						Toast.makeText(getContext(), item.getName() +" removed from Favorites", Toast.LENGTH_SHORT).show();
-
-						Cursor c = rd.check_restaurant_visited_inDatabase(item.getId());
+						item.setInFavorites(false);
+						/*Cursor c = rd.check_restaurant_visited_inDatabase(item.getId());
 						try {
 							boolean exists = c.moveToFirst();
 							if(exists) {
@@ -312,9 +313,13 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 							}
 						} finally {
 							c.close();
-						}
+						}*/
 					}
+					Context context = getContext();
+					FavoriteButtonAddAsyncTask favAsyncTask = new FavoriteButtonAddAsyncTask(context, address, contact, website, nameOfRes, resId, checkIfFav, item);
+					favAsyncTask.execute();
 				}	
+			
 			});
 
 			 /* Method to be implemented if the Direction button is clicked by the user. The method queries the database to

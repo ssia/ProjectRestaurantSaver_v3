@@ -65,7 +65,7 @@ public class RestaurantReference {
 		this.isInFavorites = isInFavorites;
 	}
 
-	public boolean isInFavorites() {
+	public boolean getInFavorites() {
 		return isInFavorites;
 	}
 

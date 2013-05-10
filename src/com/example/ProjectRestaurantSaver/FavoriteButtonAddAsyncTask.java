@@ -102,7 +102,7 @@ public class FavoriteButtonAddAsyncTask extends AsyncTask<Void, Void, Void> {
 						rd.deleteRowInList(resId);
 					}
 
-					item.setInFavorites(false);
+					//item.setInFavorites(false);
 				}
 			} finally {
 				c.close();
