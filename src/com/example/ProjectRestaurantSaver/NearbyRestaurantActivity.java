@@ -49,7 +49,6 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 		locationEditText = (EditText)findViewById(R.id.addressTextBox);
 		locationEditText.setVisibility(View.GONE);
 		goToSearch.setVisibility(View.GONE);
-		Log.v("Restaurant Saver", "Nearby Restaurant Activity: On Create");
 		//checks network connectivity
 		boolean checkConnection = isNetworkAvailable();
 		if(!checkConnection){

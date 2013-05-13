@@ -269,6 +269,9 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 
 					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 					boolean checkIfFav = item.getInFavorites();
+					
+					Log.v("RestaurantAdapter", "item.getInFavorites()"+item.getInFavorites());
+					
 					if(!item.getInFavorites()) {//if the restaurant is not in favorites make it a favorite
 						//Log.v("RestaurantAdapter, Restaurant Address and Phone No =", address+" "+contact);
 						btn.setImageResource((R.drawable.star_green));

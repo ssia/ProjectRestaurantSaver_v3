@@ -86,18 +86,22 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 				else
 					tv.setText(Integer.toString(tvs) + " visits");
 				Log.v("MostVisitedAdapter", "get tv"+ ref.getName() +tv);
+				
+				rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
+				Cursor c1 = rd.get_website_inDatabase(ref.getId());//Changed the query to find by res_id
+				int contactColumn1 = c1.getColumnIndex("Rwebsite");	
+				String favwebsite = "";
+				if (c1 != null && c1.getCount() > 0) {
+					c1.moveToFirst();
+					favwebsite = c1.getString(contactColumn1);
+				}
+				if(favwebsite.equals("")){
+					websiteButton.setVisibility(View.GONE);
+				}
+				Log.v("FavoriteRestaurantAdapter", "website = "+favwebsite);
 				this.notifyDataSetChanged();
 			}
-			rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
-			Cursor c = rd.get_website_inDatabase(ref.getId());//Changed the query to find by res_id
-			int contactColumn = c.getColumnIndex("Rwebsite");	
-			if (c != null && c.getCount() > 0) {
-				c.moveToFirst();
-				website = c.getString(contactColumn);
-			}
-			if(website.equals("")){
-				websiteButton.setVisibility(View.GONE);
-			}
+
 			/*
 			 * Method to be implemented if the Contact button is clicked by the user. The method queries the database to
 			 * get the contact number of the restaurant and put it in the dialer for the user to call the restaurant.
@@ -105,6 +109,18 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 			websiteButton.setOnClickListener(new ButtonClickListener(ref){
 				@Override
 				public void onClick(View v) {
+					
+					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
+					Cursor c = rd.get_website_inDatabase(item.getId());//Changed the query to find by res_id
+					int contactColumn = c.getColumnIndex("Rwebsite");	
+					if (c != null && c.getCount() > 0) {
+						c.moveToFirst();
+						website = c.getString(contactColumn);
+					}
+					if(website.equals("")){
+						websiteButton.setVisibility(View.GONE);
+					}
+					
 					Context context = getContext();
 					Uri uri = Uri.parse(website);
 					Log.v("Most Visited Adapter", "website url = "+ website);
@@ -117,7 +133,9 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 				@SuppressWarnings("unused")
 				@Override
 				public void onClick(View v){
-					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
+					VisitedCallAsnycTask callAsync = new VisitedCallAsnycTask(getContext(), item);
+					callAsync.execute();
+				/*	rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 					Cursor c = rd.check_restaurant_contact_inDatabase(item.getId());
 					int contactColumn = c.getColumnIndex("RContact");	
 					String favContact;
@@ -131,7 +149,7 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 					}
 					Context context = getContext();
 					Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+favContact));
-					context.startActivity(intent);
+					context.startActivity(intent);*/
 				}
 			});
 			

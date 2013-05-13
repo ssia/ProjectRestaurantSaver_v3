@@ -43,6 +43,7 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 	private ImageButton deleteButton;
 	private double[] lastKnownLocation;
 	private String favwebsite;
+	
 	public FavoriteRestaurantAdapter(Context context, int resource,
 			int textViewResourceId, List<FavoriteRestaurantObject> objects) {
 		super(context, resource, textViewResourceId, objects);
@@ -90,22 +91,35 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 			
 			rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 			Cursor c1 = rd.get_website_inDatabase(ref.getId());//Changed the query to find by res_id
-			int contactColumn1 = c.getColumnIndex("Rwebsite");	
+			int contactColumn1 = c1.getColumnIndex("Rwebsite");	
 			favwebsite = "";
-			if (c != null && c.getCount() > 0) {
-				c.moveToFirst();
-				favwebsite = c.getString(contactColumn);
+			if (c1 != null && c1.getCount() > 0) {
+				c1.moveToFirst();
+				favwebsite = c1.getString(contactColumn1);
 			}
 			if(favwebsite.equals("")){
 				websiteButton.setVisibility(View.GONE);
 			}
-			websiteButton.setOnClickListener(new ButtonClickListener(ref){
+			Log.v("FavoriteRestaurantAdapter", "website = "+favwebsite);
+			
 
+			websiteButton.setOnClickListener(new ButtonClickListener(ref){
+				
 				@SuppressWarnings("unused")
 				@Override
 				public void onClick(View v) {
+					Cursor c2 = rd.get_website_inDatabase(item.getId());//Changed the query to find by res_id
+					int contactColumn2 = c2.getColumnIndex("Rwebsite");	
+					String favwebsite2 = "";
+					if (c2 != null && c2.getCount() > 0) {
+						c2.moveToFirst();
+						favwebsite2 = c2.getString(contactColumn2);
+					}
+				
+					Log.v("FavoriteRestaurantAdapter", "website = "+favwebsite2);
+					
 					Context context = getContext();
-					Uri uri = Uri.parse(favwebsite);
+					Uri uri = Uri.parse(favwebsite2);
 					Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 					context.startActivity(intent);
 				}

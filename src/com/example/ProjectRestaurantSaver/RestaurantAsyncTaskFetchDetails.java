@@ -45,9 +45,21 @@ public class RestaurantAsyncTaskFetchDetails extends AsyncTask<Void, Void, Resta
 				}
 				JSONObject obj = new JSONObject(finalLine);
 				JSONObject ja = obj.getJSONObject("result");
-				res_detail.setAddress(ja.getString("formatted_address"));
-				res_detail.setPhoneNumber(ja.getString("formatted_phone_number"));
-				res_detail.setWebsite(ja.getString("website"));
+				if(ja.has("formatted_address"))
+					res_detail.setAddress(ja.getString("formatted_address"));
+				else
+					res_detail.setAddress("");
+				
+				if(ja.has("formatted_phone_number"))
+					res_detail.setPhoneNumber(ja.getString("formatted_phone_number"));
+				else 
+					res_detail.setPhoneNumber("");
+				
+				if(ja.has("website")){
+					res_detail.setWebsite(ja.getString("website"));
+				}
+				else
+					res_detail.setWebsite("");
 				Log.v("Restaurant Adapter, Restaurant Address,PhNo,Lat, Lon, Website frm JSON =", res_detail.getAddress() + "  "+res_detail.getPhoneNumber()+ res_detail.getLatitude() +" "+res_detail.getLongitude()+" "+res_detail.getWebsite());
 			}
 			 finally {
