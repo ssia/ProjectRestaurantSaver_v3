@@ -58,7 +58,7 @@
 	    android:layout_height="20dp"
 	    android:maxHeight="10dp"
 	    android:typeface="sans"
-		android:layout_below="@+id/fav_button"
+		android:layout_below="@+id/label"
 	    android:layout_alignParentRight="true"
 	    android:textSize="12sp"
 	    android:layout_marginRight="6dip"
