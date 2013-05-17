@@ -11,10 +11,13 @@ import com.mortley.android.restaurantsaver.util.RestaurantHelper;
 //import com.markupartist.android.widget.ActionBar.Action;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -34,7 +37,10 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 	ImageButton goToSearch;
 	private double[] lastKnownLocation;
 	private EditText locationEditText;
-
+	private LocationManager locManager;//??
+	private LocationListener locListener;//??
+	private boolean gps_enabled = false;//??
+    private boolean network_enabled = false;//??
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +56,9 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 		locationEditText = (EditText)findViewById(R.id.addressTextBox);
 		locationEditText.setVisibility(View.GONE);
 		goToSearch.setVisibility(View.GONE);
+		
+		locListener = new MyLocationListener();//??
+		locManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);//??
 		//checks network connectivity
 		boolean checkConnection = isNetworkAvailable();
 		if(!checkConnection){
@@ -83,6 +92,32 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 		if(v.getId() == refreshButton.getId() ){
 
 
+	        try {
+	            gps_enabled = locManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+	        } catch (Exception ex) {
+	        }
+	        try {
+	            network_enabled = locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+	        } catch (Exception ex) {
+	        }
+
+	        // don't start listeners if no provider is enabled
+	        if (!gps_enabled && !network_enabled) {
+				Toast.makeText(getApplicationContext(), "Sorry, Location is not determined. Please enable your Network Providers.", Toast.LENGTH_LONG).show();
+
+	            
+	        }
+
+	        if (gps_enabled) {
+	            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
+	        }
+	        if (network_enabled) {
+	            locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
+	        }
+
+	        
+			
+			
 			//check network connectivity before refresh
 			boolean checkConnection = isNetworkAvailable();
 			if(!checkConnection){
