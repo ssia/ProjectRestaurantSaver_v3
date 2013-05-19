@@ -56,7 +56,7 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 		locationEditText = (EditText)findViewById(R.id.addressTextBox);
 		locationEditText.setVisibility(View.GONE);
 		goToSearch.setVisibility(View.GONE);
-		
+
 		locListener = new MyLocationListener();//??
 		locManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);//??
 		//checks network connectivity
@@ -105,19 +105,21 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 	        if (!gps_enabled && !network_enabled) {
 				Toast.makeText(getApplicationContext(), "Sorry, Location is not determined. Please enable your Network Providers.", Toast.LENGTH_LONG).show();
 
-	            
+
 	        }
 
-	        if (gps_enabled) {
-	            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
-	        }
-	        if (network_enabled) {
+	       /* if (network_enabled) {
 	            locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
 	        }
-
 	        
-			
-			
+	        if (gps_enabled) {
+	            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
+	        }*/
+
+
+
+
+
 			//check network connectivity before refresh
 			boolean checkConnection = isNetworkAvailable();
 			if(!checkConnection){

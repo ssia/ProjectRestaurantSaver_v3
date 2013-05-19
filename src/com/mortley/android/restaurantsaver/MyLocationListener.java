@@ -22,7 +22,7 @@ public class MyLocationListener implements LocationListener{
 			loc.getLongitude();
 
 			String text = "My current location is: " +"Latitud = " + loc.getLatitude() +"Longitud = " + loc.getLongitude();
-			//Log.v("locationManager ", text);
+			Log.v("locationManager ", text);
 
 		}
 	}

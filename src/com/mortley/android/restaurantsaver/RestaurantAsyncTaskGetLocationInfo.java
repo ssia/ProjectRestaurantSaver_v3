@@ -12,13 +12,14 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class RestaurantAsyncTaskGetLocationInfo extends AsyncTask<Void, Void, JSONObject> {
 	protected String address;
 
 	public RestaurantAsyncTaskGetLocationInfo(String address) {
 		this.address = address;
-		//Log.v("RestaurantAsyncTaskFetchDetails", "restaurant adapter = "+ this.address);
+		Log.v("RestaurantAsyncTaskFetchDetails", "restaurant adapter = "+ this.address);
 	}
 
 	@Override

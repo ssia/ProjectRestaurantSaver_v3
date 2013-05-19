@@ -17,7 +17,7 @@
 	        android:layout_marginLeft="6dip"
 	        android:layout_marginRight="6dip">
 	 	</ImageButton>   
-	 	
+
 	 	<ImageButton 
 	        android:id="@+id/fav_button"
 	        android:layout_width="30dp"
@@ -38,8 +38,8 @@
 		    android:textSize="16sp"
 		    android:textColor="#363535">
 	    </TextView>
-	
-	
+
+
 	<TextView
 	    android:id="@+id/address_label"
 	    android:layout_width="wrap_content"
