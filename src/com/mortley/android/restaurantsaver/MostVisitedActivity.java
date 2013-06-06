@@ -7,20 +7,26 @@ import com.mortley.android.restaurantsaver.application.RestaurantApplication;
 import com.mortley.android.restaurantsaver.util.RestaurantHelper;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-public class MostVisitedActivity  extends ListActivity implements OnClickListener{
+public class MostVisitedActivity  extends ListActivity implements OnClickListener , LocationListener{
 	private DatabaseOpenHelper rd;
 	private Button publishButton, sortByName, sortByTimes;
 	private ArrayList<MostVisitedResturantObject> listItems;
 	private double[] lastKnownLocation;
 	private MostVisitedAdapter listAdapter;
 	private int timesGlobalVar, nameGlobalVar;
+	private LocationManager locManager;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,6 +39,9 @@ public class MostVisitedActivity  extends ListActivity implements OnClickListene
 		sortByName.setOnClickListener(this);
 		sortByTimes = (Button)findViewById(R.id.mVisitedSortByTimes);
 		sortByTimes.setOnClickListener(this);
+		
+		locManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);//request location updates
+		locManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 1000, 100, this);
 		
 		RestaurantApplication application1 = (RestaurantApplication) this.getApplication();
 		listAdapter = new MostVisitedAdapter(this, R.layout.mostvisitedrow,  R.id.mVisited_name, this.fetchRestaurantsList());
@@ -176,5 +185,42 @@ public class MostVisitedActivity  extends ListActivity implements OnClickListene
 	}
 	public void setListAdapter1(MostVisitedAdapter listAdapter1) {
 		this.listAdapter = listAdapter1;
+	}
+	@Override
+	public void onLocationChanged(Location location) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 100, this); 
+		//Log.v("FavoriteRestaurantActivity", "In OnResume()");
+
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		locManager.removeUpdates(this); 
+		//Log.v("FavoriteRestaurantActivity", "In onPause()");
+
 	}
 }

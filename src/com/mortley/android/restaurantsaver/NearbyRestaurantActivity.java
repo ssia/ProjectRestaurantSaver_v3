@@ -32,15 +32,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class NearbyRestaurantActivity extends ListActivity implements OnClickListener{
+public class NearbyRestaurantActivity extends ListActivity implements OnClickListener, LocationListener{
 	private Button refreshButton, searchRestaurants; 
 	ImageButton goToSearch;
 	private double[] lastKnownLocation;
 	private EditText locationEditText;
-	private LocationManager locManager;//??
-	private LocationListener locListener;//??
-	private boolean gps_enabled = false;//??
-    private boolean network_enabled = false;//??
+	private LocationManager locManager;
+	private LocationListener locListener;
+	private boolean gps_enabled = false;
+    private boolean network_enabled = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,8 +57,12 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 		locationEditText.setVisibility(View.GONE);
 		goToSearch.setVisibility(View.GONE);
 
-		locListener = new MyLocationListener();//??
+		//locListener = new MyLocationListener();//??
 		locManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);//??
+		
+
+		locManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 1000, 100, this);
+		
 		//checks network connectivity
 		boolean checkConnection = isNetworkAvailable();
 		if(!checkConnection){
@@ -68,10 +72,13 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 		if(checkConnection){
 			//sets current location parameters for the user
 			lastKnownLocation = RestaurantHelper.getLastKnownLocation(this);
-			System.out.println("network"+lastKnownLocation[0]+ lastKnownLocation[1]);
+			//Log.v("NearbyRestaurantActivity", "This"+this);
+			
 			RestaurantApplication application = (RestaurantApplication) this.getApplication();
 			RestaurantAdapter restaurantAdapter = new RestaurantAdapter(this, R.layout.restaurantrow,  R.id.label,new ArrayList<RestaurantReference>());
 			restaurantAdapter.setLastKnownLocation(lastKnownLocation);  
+			
+
 			//set a global variable for the RestaurantAdapter in the RestaurantApplication class.
 			application.setRestaurantAdapter(restaurantAdapter);
 			//Set the adapter first and then update it when the RestaurantHttpAsyncTask makes a web service call.
@@ -95,10 +102,12 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 	        try {
 	            gps_enabled = locManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 	        } catch (Exception ex) {
+	        	ex.printStackTrace();
 	        }
 	        try {
 	            network_enabled = locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 	        } catch (Exception ex) {
+	        	ex.printStackTrace();
 	        }
 
 	        // don't start listeners if no provider is enabled
@@ -107,18 +116,6 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 
 
 	        }
-
-	       /* if (network_enabled) {
-	            locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locListener);
-	        }
-	        
-	        if (gps_enabled) {
-	            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locListener);
-	        }*/
-
-
-
-
 
 			//check network connectivity before refresh
 			boolean checkConnection = isNetworkAvailable();
@@ -212,5 +209,44 @@ public class NearbyRestaurantActivity extends ListActivity implements OnClickLis
 			//Log.d("network", "Network available:false");
 			return false;
 		}
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 100, this); 
+		//Log.v("NearbyRestaurantActivity", "In OnResume()");
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		locManager.removeUpdates(this); 
+		//Log.v("NearbyRestaurantActivity", "In onPause()");
+
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+
 	}
 }

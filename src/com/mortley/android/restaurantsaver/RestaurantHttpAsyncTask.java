@@ -9,6 +9,9 @@ import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.mortley.android.restaurantsaver.application.RestaurantApplication;
+
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -45,9 +48,10 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 		double lat = 0.0;
 		double lon = 0.0;
 		LocationManager lm = (LocationManager) m_activity.getSystemService(Context.LOCATION_SERVICE);    
-		Location location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);  
+		Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);  
+		
 		if (location == null){
-			location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);  
+			 location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);  
 
 		}
 
@@ -56,10 +60,11 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 			lon = 0.0;
 		}
 		else{
-			Log.v("RestaurantHttpAsyncTask", "Latitude = "+Double.toString(location.getLatitude()));
-			Log.v("RestaurantHttpAsyncTask", "Longitude = "+Double.toString(location.getLongitude())); 		
+			//Log.v("RestaurantHttpAsyncTask", "Latitude = "+Double.toString(location.getLatitude()));
+			//Log.v("RestaurantHttpAsyncTask", "Longitude = "+Double.toString(location.getLongitude())); 		
 			lat = location.getLatitude();
 			lon = location.getLongitude();
+			//restaurantAdapter.setLastKnownLocation(location);
 		}
 		try{
 			//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius=700&types=restaurant&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
@@ -72,7 +77,7 @@ public class RestaurantHttpAsyncTask extends AsyncTask<Void, Void, ArrayList<Res
 					String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius=700&types=restaurant&keyword="+keyword+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
 					//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location=37.387413,-122.046046&radius=2700&types=restaurant&keyword=subway"+"&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
 					//String urldef = "https://maps.googleapis.com/maps/api/place/search/json?location="+lat+","+lon+"&radius=700&types=restaurant&sensor=false&key=AIzaSyBsxN3NdPnzp4X4QDkh1R1tBDPQQ30lD6s";
-					Log.v("URLdef", urldef);
+					//Log.v("URLdef", urldef);
 					URL urlPlace = new URL(urldef);    		
 					tc = urlPlace.openConnection();
 					in = new BufferedReader(new InputStreamReader(tc.getInputStream()));

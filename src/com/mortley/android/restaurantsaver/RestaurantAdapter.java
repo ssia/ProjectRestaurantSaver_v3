@@ -50,7 +50,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 	}
 
 	// We are not calling this at this point to conserve the battery life.
-	protected void setLocationChangeListener() {
+/*	protected void setLocationChangeListener() {
 
 		LocationManager lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 
@@ -71,7 +71,7 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 		};
 
 		lm.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-	}
+	}*/
 
 	protected void calculateCurrentAddress(Location location) {
 		lat = 0.0;
@@ -79,9 +79,11 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 		LocationManager lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);    
 
 		if(location == null) {
+			location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);  
+		}
+		if(location == null) {
 			location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);  
 		}
-
 		if(location == null){
 			lat = 0.0;
 			lon = 0.0;
@@ -230,7 +232,6 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 
 				@Override
 				public void onClick(View v) {
-					System.out.println(item.getName() + " get fav = "+ item + " "+item.getInFavorites());
 					String nameOfRes = item.getName();
 					String resId = item.getId();
 					RestaurantDetails details = fetchRestaurantDetails(item);
@@ -271,23 +272,31 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 
 			directionsButton.setOnClickListener(new ButtonClickListener(ref){
 				LocationObject location = new LocationObject();
-
 				@SuppressWarnings("unused")
 				@Override
 				public void onClick(View arg0) {
+					
+
 					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 					RestaurantDetails details = fetchRestaurantDetails(item);
 					String mVisitedAddress = details.getAddress();
+					//Log.v("RestaurantAdapter", "mVisitedAddress"+ mVisitedAddress);
 					String newString = mVisitedAddress.replace(",", "");
 					newString = newString.replace(" ", "+");
-					List<Address> foundGeocode = null;
+					//List<Address> foundGeocode = null;
 					JSONObject loc = getLocationInfo(newString);
+					//Log.v("RestaurantAdapter","loc.toString()"+loc.toString());
 					LocationObject p = getGeoPoint(loc);
-					double lat = p.getLat();
-					double lon = p.getLng();
-					System.out.println("http://maps.google.com/maps?saddr="+lastKnownLocation[0] +","+lastKnownLocation[1]+"&daddr="+lat+","+lon);
-					Intent intent = new Intent(android.content.Intent.ACTION_VIEW, 
-							Uri.parse("http://maps.google.com/maps?saddr="+lastKnownLocation[0] +","+lastKnownLocation[1]+"&daddr="+lat+","+lon));
+					/*double lat = p.getLat();
+					double lon = p.getLng();*/
+					double destLat = p.getLat();
+					double destLon = p.getLng();
+					//Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?saddr="+lastKnownLocation[0] +","+lastKnownLocation[1]+"&daddr="+lat+","+lon));
+					//Log.v("RestaurantAdapter" , "Lat Long =" + lat +lon);
+					//Log.v("RestaurantAdapter" , "destLat destLon =" + destLat +destLon);
+
+					Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?saddr="+lat+","+lon+"&daddr="+destLat+","+destLon));
+
 					Context context = getContext();
 					context.startActivity(intent);
 				}
@@ -388,6 +397,17 @@ public class RestaurantAdapter extends ArrayAdapter<RestaurantReference> {
 			e.printStackTrace();
 		}
 		//Log.v("geocoder addresses", add);
+		if(add.equals("")){
+			GetAddressAsyncTask addressAsyncTask;
+			addressAsyncTask = new GetAddressAsyncTask(lat, lng);
+			try {
+				add = addressAsyncTask.execute().get();
+			} catch (Throwable th) {
+				// TODO Auto-generated catch block
+				th.printStackTrace();
+				throw new RuntimeException("Get address from lat&lon using google api failed!", th);
+			} 
+		}
 		return add;
 
 	}

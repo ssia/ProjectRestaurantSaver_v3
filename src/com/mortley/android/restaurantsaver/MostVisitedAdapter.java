@@ -13,6 +13,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +37,8 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 	String website;
 	@SuppressWarnings("unused")
 	private Geocoder geocoder = null;
+	private double currentLat;
+	private double currentLon;
 
 	public MostVisitedAdapter(Context context, int resource,
 			int textViewResourceId, List<MostVisitedResturantObject> objects) {
@@ -94,7 +98,7 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 				if(favwebsite.equals("")){
 					websiteButton.setVisibility(View.GONE);
 				}
-				Log.v("FavoriteRestaurantAdapter", "website = "+favwebsite);
+				//Log.v("FavoriteRestaurantAdapter", "website = "+favwebsite);
 				this.notifyDataSetChanged();
 			}
 
@@ -181,11 +185,11 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 			 * get the direction to the restaurant in google maps.
 			 */
 			directionsButton.setOnClickListener(new ButtonClickListener(ref){
-				LocationObject location = new LocationObject();
 
 				@SuppressWarnings("unused")
 				@Override
 				public void onClick(View arg0) {
+					calculateCurrentAddress(null);
 					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 					Cursor c = rd.check_restaurant_address_inDatabase(item.getId());//Changed the query to find by res_id
 					int contactColumn = c.getColumnIndex("RAddress");	
@@ -196,7 +200,7 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 					}
 					else {
 						mVisitedAddress = "";
-						Toast.makeText(getContext(), "Contact Number is Not Available", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getContext(), "Contact Address is Not Available", Toast.LENGTH_SHORT).show();
 					}
 					String newString = mVisitedAddress.replace(",", "");
 					newString = newString.replace(" ", "+");
@@ -205,12 +209,11 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 					JSONObject loc = getLocationInfo(newString);
 					LocationObject p = getGeoPoint(loc);
 
-					double lat = p.getLat();
-					double lon = p.getLng();
-					System.out.println("gropoint ="+p+" "+lat+ " "+lon);
+					double destLat = p.getLat();
+					double destLon = p.getLng();
 
 					Intent intent = new Intent(android.content.Intent.ACTION_VIEW, 
-							Uri.parse("http://maps.google.com/maps?saddr="+ lastKnownLocation[0] + "," + lastKnownLocation[1] +"&daddr=" + lat +","+lon));
+							Uri.parse("http://maps.google.com/maps?saddr="+ currentLat + "," + currentLon +"&daddr=" + destLat +","+destLon));
 					Context context = getContext();
 					context.startActivity(intent);
 				}
@@ -326,5 +329,28 @@ public class MostVisitedAdapter extends ArrayAdapter<MostVisitedResturantObject>
 
 	public double[] getLastKnownLocation() {
 		return lastKnownLocation;
+	}
+	
+	protected void calculateCurrentAddress(Location location) {
+		currentLat = 0.0;
+		currentLon = 0.0;
+		LocationManager lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);    
+
+		if(location == null) {
+			location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);  
+		}
+		if(location == null) {
+			location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);  
+		}
+		if(location == null){
+			currentLat = 0.0;
+			currentLon = 0.0;
+		}
+		else{
+			currentLat = location.getLatitude();
+			currentLon = location.getLongitude();
+			//Log.v("RestaurantAdapter", "lat = "+currentLat);
+			//Log.v("RestaurantAdapter", "lon"+currentLon); 			
+		}
 	}
 }

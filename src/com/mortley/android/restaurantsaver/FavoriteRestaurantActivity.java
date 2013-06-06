@@ -6,18 +6,24 @@ import java.util.List;
 import com.mortley.android.restaurantsaver.util.RestaurantHelper;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-public class FavoriteRestaurantActivity extends ListActivity implements OnClickListener{
+public class FavoriteRestaurantActivity extends ListActivity implements OnClickListener, LocationListener{
 	private DatabaseOpenHelper rd;
 	private Button publishButton,sortByRating, sortByName;
 	private ArrayList<FavoriteRestaurantObject> favListItems;
 	private double[] lastKnownLocation;
+	private LocationManager locManager;
 	private FavoriteRestaurantAdapter listAdapter;
 	private int ratingGlobalVar, nameGlobalVar;
 
@@ -33,6 +39,10 @@ public class FavoriteRestaurantActivity extends ListActivity implements OnClickL
 		sortByRating.setOnClickListener(this);
 		sortByName = (Button)findViewById(R.id.fVisitedSortByName);
 		sortByName.setOnClickListener(this);
+		
+		locManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);//request location updates
+		locManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 1000, 100, this);
+		
 		listAdapter = new FavoriteRestaurantAdapter(this, R.layout.favoriterow,  R.id.favName, this.fetchFavRestaurantsList());
 		listAdapter.setLastKnownLocation(lastKnownLocation);
 		listAdapter.notifyDataSetChanged();
@@ -90,7 +100,6 @@ public class FavoriteRestaurantActivity extends ListActivity implements OnClickL
 		favListItems = sortRestaurantsByName(favListItems);
 		return favListItems;
 	}
-
 
 	private ArrayList<FavoriteRestaurantObject> sortRestaurantsByName(
 			ArrayList<FavoriteRestaurantObject> favListItems2) {
@@ -176,5 +185,45 @@ public class FavoriteRestaurantActivity extends ListActivity implements OnClickL
 			listAdapter.notifyDataSetChanged();
 			setListAdapter(listAdapter);
 		}
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 100, this); 
+		//Log.v("FavoriteRestaurantActivity", "In OnResume()");
+
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		locManager.removeUpdates(this); 
+		//Log.v("FavoriteRestaurantActivity", "In onPause()");
+
 	}
 }

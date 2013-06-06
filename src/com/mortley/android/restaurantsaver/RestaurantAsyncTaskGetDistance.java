@@ -42,7 +42,7 @@ public class RestaurantAsyncTaskGetDistance extends AsyncTask<Void, Void, String
 		try {
 
 			urlPlace = new URL(distanceURL);
-			Log.v("RestaurantAsyncTaskGetDistance","urlPlace"+urlPlace );
+			//Log.v("RestaurantAsyncTaskGetDistance","urlPlace"+urlPlace );
 			//urlPlace = new URL("http://maps.googleapis.com/maps/api/distancematrix/json?origins=401%20Castro%20St,%20Mountain%20View,%20CA%2094041,%20USA&destinations=800%20California%20StMountain%20View,%20CA%2094041&mode=driving&sensor=false&units=imperial");
 			URLConnection tc = urlPlace.openConnection();
 			BufferedReader in = new BufferedReader(new InputStreamReader(tc.getInputStream()));
@@ -51,14 +51,14 @@ public class RestaurantAsyncTaskGetDistance extends AsyncTask<Void, Void, String
 				finalLine += line;
 			}
 			in.close();
-			Log.v("RestaurantAsyncTaskGetDistance", "distance json ="+finalLine);
+			//Log.v("RestaurantAsyncTaskGetDistance", "distance json ="+finalLine);
 			JSONObject obj = new JSONObject(finalLine);
 			JSONArray ja = obj.getJSONArray("rows");
 			JSONObject jo = (JSONObject) ja.get(0);
 			JSONArray jb = jo.getJSONArray("elements");
 			JSONObject jbo = jb.getJSONObject(0).getJSONObject("distance");
 			distanceinMiles= jbo.getString("text");
-			Log.v("RestaurantAsyncTaskGetDistance", "distance in miles = "+distanceinMiles);
+			//Log.v("RestaurantAsyncTaskGetDistance", "distance in miles = "+distanceinMiles);
 
 
 		} catch (MalformedURLException e) {

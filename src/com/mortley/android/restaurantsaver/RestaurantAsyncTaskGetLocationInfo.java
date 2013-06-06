@@ -19,7 +19,7 @@ public class RestaurantAsyncTaskGetLocationInfo extends AsyncTask<Void, Void, JS
 
 	public RestaurantAsyncTaskGetLocationInfo(String address) {
 		this.address = address;
-		Log.v("RestaurantAsyncTaskFetchDetails", "restaurant adapter = "+ this.address);
+		//Log.v("RestaurantAsyncTaskFetchDetails", "restaurant adapter = "+ this.address);
 	}
 
 	@Override

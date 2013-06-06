@@ -14,7 +14,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.location.Address;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +38,8 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 	private ImageButton deleteButton;
 	private double[] lastKnownLocation;
 	private String favwebsite;
+	double currentLat;
+	double currentLon;
 	
 	public FavoriteRestaurantAdapter(Context context, int resource,
 			int textViewResourceId, List<FavoriteRestaurantObject> objects) {
@@ -49,7 +54,8 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 			LayoutInflater vi = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			v = vi.inflate(R.layout.favoriterow, null);//create instance of the template for the particular row represented by position
 		}
-
+		currentLat = 0.0;
+		currentLon = 0.0;
 		dialButton = (ImageButton) v.findViewById(R.id.favContactButton);
 		directionsButton = (ImageButton) v.findViewById(R.id.favDirectionsButton);
 		deleteButton = (ImageButton) v.findViewById(R.id.favDelete);
@@ -137,6 +143,7 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 				@SuppressWarnings("unused")
 				@Override
 				public void onClick(View arg0) {
+					calculateCurrentAddress(null );
 					rd = DatabaseOpenHelper.getOrCreateInstance(getContext(), "restaurantSaver.db", null, 0);
 					Cursor c = rd.check_restaurant_address_inDatabase(item.getId());//Changed the query to find by res_id
 					int contactColumn = c.getColumnIndex("RAddress");	
@@ -147,7 +154,7 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 					}
 					else {
 						mVisitedAddress = "";
-						Toast.makeText(getContext(), "Contact Number is Not Available", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getContext(), "Contact Address is Not Available", Toast.LENGTH_SHORT).show();
 					}
 					String newString = mVisitedAddress.replace(",", "");
 					newString = newString.replace(" ", "+");
@@ -155,16 +162,19 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 					JSONObject loc = getLocationInfo(newString);
 					LocationObject p = getGeoPoint(loc);
 
-					double lat = p.getLat();
-					double lon = p.getLng();
-					System.out.println("gropoint ="+p+" "+lat+ " "+lon);
+					double destLat = p.getLat();
+					double destLon= p.getLng();
+					
 
 					Intent intent = new Intent(android.content.Intent.ACTION_VIEW, 
-							Uri.parse("http://maps.google.com/maps?saddr="+ lastKnownLocation[0] + "," + lastKnownLocation[1] +"&daddr=" + lat +","+lon));
+							Uri.parse("http://maps.google.com/maps?saddr="+ currentLat + "," + currentLon +"&daddr=" + destLat +","+destLon));
 					Context context = getContext();
 					context.startActivity(intent);
 				}
 			});
+			
+	
+
 			deleteButton.setOnClickListener(new ButtonClickListener(ref){
 				@Override
 				public void onClick(View arg0) {
@@ -300,6 +310,34 @@ public class FavoriteRestaurantAdapter extends ArrayAdapter<FavoriteRestaurantOb
 	}
 	public double[] getLastKnownLocation() {
 		return lastKnownLocation;
+	}
+	
+	
+	protected void calculateCurrentAddress(Location location) {
+		currentLat = 0.0;
+		currentLon = 0.0;
+		LocationManager lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);    
+
+		if(location == null) {
+			location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);  
+		}
+		if(location == null) {
+			location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);  
+		}
+		if(location == null){
+			currentLat = 0.0;
+			currentLon = 0.0;
+		}
+		else{
+
+			currentLat = location.getLatitude();
+			currentLon = location.getLongitude();
+			//Log.v("RestaurantAdapter", "lat = "+currentLat);
+			//Log.v("RestaurantAdapter", "lon"+currentLon); 
+			
+		}
+
+
 	}
 
 }

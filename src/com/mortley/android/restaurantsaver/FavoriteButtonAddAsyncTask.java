@@ -27,13 +27,10 @@ public class FavoriteButtonAddAsyncTask extends AsyncTask<Void, Void, Void> {
 		this.item = item;
 	}
 
-	
-
 	@Override
 	protected void onPreExecute() {
 
 	}
-	
 	
 	@Override
 	protected  Void doInBackground(Void... params) {
@@ -81,6 +78,5 @@ public class FavoriteButtonAddAsyncTask extends AsyncTask<Void, Void, Void> {
 	protected void onPostExecute() {
 		
 	}
-
 
 }
